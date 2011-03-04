@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright (C) :	2008,2009
+ *   Copyright (C) :	2008,2009,2010,2011
  *			European Synchrotron Radiation Facility
  *			BP 220, Grenoble 38043
  *			FRANCE
@@ -33,35 +33,6 @@
  *  
  *   $Revision$				$Author$
  *   $Date$					$State$
- *  
- *   $Log$
- *   Revision 4.2  2009/08/25 15:16:05  poncet
- *   Bug Fix.
- *
- *   Revision 4.1  2009/04/23 16:36:57  poncet
- *   Added support for RawImage attribute (corresponding to some Tango DevEncoded attributes).
- *
- *   Revision 4.0  2009/04/03 14:47:01  poncet
- *   Added the support for Xaxis min and max properties for NumberSpectrum attributes.
- *
- *   Revision 3.11  2009/03/10 14:40:50  poncet
- *   Adapted to the new version of the ATK StringImageTableViewer. All scrolling is now handled directly inside the ATK viewer.
- *
- *   Revision 3.10  2009/01/27 09:47:56  poncet
- *   Added the GNU General Public License statement in all source files.
- *
- *   Revision 3.9  2009/01/06 13:21:07  poncet
- *   Fixed the bug where the DevStateSpectrumPanel tabs were not refreshed by the refreshers.
- *
- *   Revision 3.8  2008/10/23 16:15:36  poncet
- *   Fixed a bug related to the DevicFactory's State and Status refresher.
- *
- *   Revision 3.7  2008/09/10 12:15:17  poncet
- *   Better management of attribute refreshing. Now refresh only the needed attributes. Takes into account operator/expert flag.
- *
- *   Revision 3.6  2008/07/10 14:34:29  poncet
- *   Added DevStateSpectrumPanel to display DevStateSpectrum attributes.
- *
  *  
  */
  
