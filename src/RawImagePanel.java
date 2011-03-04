@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright (C) :	2009
+ *   Copyright (C) :	2009,2010,2011
  *			European Synchrotron Radiation Facility
  *			BP 220, Grenoble 38043
  *			FRANCE
@@ -33,15 +33,6 @@
  *  
  *   $Revision$				$Author$
  *   $Date$					$State$
- *  
- *   $Log$
- *   Revision 4.2  2009/08/25 15:16:05  poncet
- *   Bug Fix.
- *
- *   Revision 4.1  2009/04/23 16:36:57  poncet
- *   Added support for RawImage attribute (corresponding to some Tango DevEncoded attributes).
- *
- *
  *  
  */
 

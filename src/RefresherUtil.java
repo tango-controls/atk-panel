@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright (C) :	2007,2008,2009
+ *   Copyright (C) :	2007,2008,2009,2010,2011
  *			European Synchrotron Radiation Facility
  *			BP 220, Grenoble 38043
  *			FRANCE
@@ -35,22 +35,6 @@
  *   $Revision$				$Author$
  *   $Date$					$State$
  *  
- *   $Log$
- *   Revision 4.2  2009/08/25 15:16:05  poncet
- *   Bug Fix.
- *
- *   Revision 4.1  2009/04/23 16:36:57  poncet
- *   Added support for RawImage attribute (corresponding to some Tango DevEncoded attributes).
- *
- *   Revision 4.0  2009/04/03 14:47:02  poncet
- *   Added the support for Xaxis min and max properties for NumberSpectrum attributes.
- *
- *   Revision 3.11  2009/03/10 14:40:50  poncet
- *   Adapted to the new version of the ATK StringImageTableViewer. All scrolling is now handled directly inside the ATK viewer.
- *
- *   Revision 3.10  2009/01/27 09:47:58  poncet
- *   Added the GNU General Public License statement in all source files.
- *
  */
  
 package atkpanel;
