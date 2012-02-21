@@ -317,7 +317,7 @@ public class MainPanel extends javax.swing.JFrame {
         
         
 	splash.setTitle("AtkPanel  "+ versNumber);
-	splash.setCopyright("(c) ESRF 2002-2011");
+	splash.setCopyright("(c) ESRF 2002-2012");
 	splash.setMessage("Waiting for device-name...");
 	splash.initProgress();
         splash.setMaxProgress(12);
