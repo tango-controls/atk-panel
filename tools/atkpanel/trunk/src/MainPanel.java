@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright (C) :	2002,2003,2004,2005,2006,2007,2008,2009,2010,2011
+ *   Copyright (C) :	2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012
  *			European Synchrotron Radiation Facility
  *			BP 220, Grenoble 38043
  *			FRANCE
@@ -54,6 +54,7 @@ import fr.esrf.tangoatk.widget.util.Splash;
 import fr.esrf.tangoatk.widget.util.ErrorHistory;
 import fr.esrf.tangoatk.widget.util.ErrorPopup;
 import fr.esrf.tangoatk.widget.attribute.*;
+import fr.esrf.tangoatk.widget.util.ATKGraphicsUtils;
 
 public class MainPanel extends javax.swing.JFrame {
 
@@ -931,6 +932,7 @@ public class MainPanel extends javax.swing.JFrame {
 	splash.setVisible(false);
 	
    	pack();
+        ATKGraphicsUtils.centerFrameOnScreen(this);
         setVisible(true);
 
         //DeviceFactory.getInstance().setTraceMode(DeviceFactory.TRACE_REFRESHER);
@@ -1409,16 +1411,15 @@ public class MainPanel extends javax.swing.JFrame {
         String    versionText, versNumber;
         int       colon_idx, dollar_idx;
         
-        versionText = new String("$Revision$");
-        
+        versionText = new String(REVISION);
         colon_idx = versionText.lastIndexOf(":");
-        dollar_idx = versionText.lastIndexOf("$");
+        dollar_idx = versionText.length();
         versNumber = versionText.substring(colon_idx+1, dollar_idx);
         try
         {
             javax.swing.JOptionPane.showMessageDialog(this, 
 	    "\n\n   atkpanel   : "+versNumber
-	   +"\n\n   ESRF  :   Computing  Services \n\n",
+	   +"\n\n   ESRF  :   Accelerator Control Unit \n\n",
             "atkpanel   Version", javax.swing.JOptionPane.PLAIN_MESSAGE );
         }
         catch (Exception e)

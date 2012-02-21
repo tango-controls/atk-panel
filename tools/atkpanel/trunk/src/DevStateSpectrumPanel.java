@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright (C) :	2008,2009,2010,2011
+ *   Copyright (C) :	2008,2009,2010,2011,2012
  *			European Synchrotron Radiation Facility
  *			BP 220, Grenoble 38043
  *			FRANCE
