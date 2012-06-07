@@ -189,6 +189,17 @@ public class RefresherUtil {
                 iatt.setSkippingRefresh(true);
             }
         }
+
+        public static void activateRefreshForAllAttributes(AttributeList attl)
+        {
+            IAttribute    iatt = null;
+            int           nb_atts = attl.getSize();
+            for (int idx=0; idx < nb_atts; idx++)
+            {
+                iatt = (IAttribute) attl.getElementAt(idx);
+                iatt.setSkippingRefresh(false);
+            }
+        }
         
         public static void skippingRefreshForExpertAttributes(AttributeList attl)
         {

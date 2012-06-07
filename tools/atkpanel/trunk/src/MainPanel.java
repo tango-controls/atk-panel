@@ -1733,7 +1733,14 @@ public class MainPanel extends javax.swing.JFrame {
 	      attStateViewer.setModel(null);
 	      attStatusViewer.setModel(null);
 	   }
-           
+
+           // We need to remove all skippingRefresh flags set to true by atkpanel
+           RefresherUtil.activateRefreshForAllAttributes(all_spectrum_atts);
+           RefresherUtil.activateRefreshForAllAttributes(all_number_image_atts);
+           RefresherUtil.activateRefreshForAllAttributes(all_string_image_atts);
+           RefresherUtil.activateRefreshForAllAttributes(all_raw_image_atts);
+           RefresherUtil.activateRefreshForAllAttributes(all_scalar_atts);
+
            /* We need to clear all models on all viewers to save memory usage */
            clearAllModels();
 	   
