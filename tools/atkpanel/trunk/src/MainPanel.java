@@ -118,7 +118,8 @@ public class MainPanel extends javax.swing.JFrame {
     private boolean refresherActivated = true;
 
     private static final String                     REVISION="Revision: 4.4 ";
-
+    
+    private JDialog                                 tgDevtestDlg = null;
 
     /** Creates new form AtkPanel */
     
@@ -337,7 +338,8 @@ public class MainPanel extends javax.swing.JFrame {
 			    {
                                if (    (entity instanceof IScalarAttribute)
 			            || (entity instanceof IBooleanScalar)
-			            || (entity instanceof IEnumScalar) )
+			            || (entity instanceof IEnumScalar)
+			            || (entity instanceof IDevStateScalar) )
 			       {
                                   if (    (entity.getNameSansDevice().equalsIgnoreCase("Status"))
 				       || (entity.getNameSansDevice().equalsIgnoreCase("State")) )
@@ -358,7 +360,8 @@ public class MainPanel extends javax.swing.JFrame {
 			    {
                                if (    (entity instanceof IScalarAttribute)
 			            || (entity instanceof IBooleanScalar)
-			            || (entity instanceof IEnumScalar) )
+			            || (entity instanceof IEnumScalar)
+			            || (entity instanceof IDevStateScalar) )
 			       {
                                   if (    (entity.getNameSansDevice().equalsIgnoreCase("Status"))
 				       || (entity.getNameSansDevice().equalsIgnoreCase("State")) )
@@ -383,7 +386,8 @@ public class MainPanel extends javax.swing.JFrame {
 			    {
                                if (    (entity instanceof IScalarAttribute)
 			            || (entity instanceof IBooleanScalar)
-			            || (entity instanceof IEnumScalar) )
+			            || (entity instanceof IEnumScalar)
+			            || (entity instanceof IDevStateScalar) )
 			       {
                                   if (    (entity.getNameSansDevice().equalsIgnoreCase("Status"))
 				       || (entity.getNameSansDevice().equalsIgnoreCase("State")) )
@@ -442,7 +446,8 @@ public class MainPanel extends javax.swing.JFrame {
 			    {
                                if (    (entity instanceof INumberSpectrum)
                                     || (entity instanceof IStringSpectrum)
-                                    || (entity instanceof IDevStateSpectrum)  )
+                                    || (entity instanceof IDevStateSpectrum)
+                                    || (entity instanceof IBooleanSpectrum)  )
                                
 			       {
 				     String message = "Adding to all_spectrum_atts : ";
@@ -462,7 +467,8 @@ public class MainPanel extends javax.swing.JFrame {
 			    {
                                if (    (entity instanceof INumberSpectrum)
                                     || (entity instanceof IStringSpectrum)
-                                    || (entity instanceof IDevStateSpectrum)  )
+                                    || (entity instanceof IDevStateSpectrum)
+                                    || (entity instanceof IBooleanSpectrum)  )
                                
 			       {
 				     if (entity.isOperator())
@@ -755,8 +761,26 @@ public class MainPanel extends javax.swing.JFrame {
 	   abortAppli();
 	   return false;
         }
+        
+        if (roMode)
+        {
+            tgDevTestJMenuItem.setVisible(false);
+            return true;
+        }
 	
 	this.setTitle("AtkPanel "+versNumber+" : "+devName);
+        tgDevtestDlg = new JDialog(this, false);
+        tgDevtestDlg.setTitle("Test Device : "+devName);
+        try
+        {
+            jive.ExecDev devTestPanel = new jive.ExecDev(devName);
+            tgDevtestDlg.setContentPane(devTestPanel);
+            
+        } catch (Exception ex)
+        {
+            tgDevtestDlg = null;
+            tgDevTestJMenuItem.setEnabled(false);
+        }
 	return true;
     }
     
@@ -998,6 +1022,7 @@ public class MainPanel extends javax.swing.JFrame {
 	boolTrendJMenuItem = new javax.swing.JMenuItem();
 	jMenuItem3 = new javax.swing.JMenuItem();
 	diagJMenuItem = new javax.swing.JMenuItem();
+        tgDevTestJMenuItem = new javax.swing.JMenuItem();
 
 	jMenu2 = new javax.swing.JMenu();
 	jMenuItem6 = new javax.swing.JMenuItem();
@@ -1066,6 +1091,18 @@ public class MainPanel extends javax.swing.JFrame {
 
 	// View pulldown menu
 	jMenu3.setText("View");
+
+	tgDevTestJMenuItem.setText("Test Device");
+	tgDevTestJMenuItem.addActionListener(
+	     new java.awt.event.ActionListener()
+	         {
+		    public void actionPerformed(java.awt.event.ActionEvent evt)
+		    {
+		       testDeviceActionPerformed(evt);
+		    }
+		 });
+	jMenu3.add(tgDevTestJMenuItem);
+
 
 	jMenuItem5.setText("Numeric Trend ");
 	jMenuItem5.addActionListener(
@@ -1428,6 +1465,15 @@ public class MainPanel extends javax.swing.JFrame {
         
     }//GEN-LAST:event_helpVersionActionPerformed
 
+    private void testDeviceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testDeviceActionPerformed
+        // Add your handling code here:
+        if (tgDevtestDlg == null) return;
+
+        ATKGraphicsUtils.centerDialog(tgDevtestDlg);
+        
+        tgDevtestDlg.setVisible(true);
+    }//GEN-LAST:event_viewTrendActionPerformed
+
     private void viewTrendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewTrendActionPerformed
         // Add your handling code here:
 	fr.esrf.tangoatk.widget.util.ATKGraphicsUtils.centerFrame(mainJSplitPane, trendFrame);
@@ -1646,7 +1692,7 @@ public class MainPanel extends javax.swing.JFrame {
         all_scalar_atts.removeSetErrorListener(errorHistory);
 	all_scalar_atts.removeSetErrorListener(errorPopup);
         
-        /* ========= NumberSpectrum, StringSpectrum and DevStateSpectrum attributes ============ */
+        /* ========= NumberSpectrum, StringSpectrum, DevStateSpectrum and BooleanSpectrum attributes ============ */
         Iterator<JComponent>  spIt = all_spectrum_panels.iterator();
         while (spIt.hasNext())
         {
@@ -1668,6 +1714,12 @@ public class MainPanel extends javax.swing.JFrame {
                       DevStateSpectrumPanel  dsPanel = (DevStateSpectrumPanel) sPanel;
                       dsPanel.clearModel();
                   }
+                  else
+                     if (sPanel instanceof BooleanSpectrumPanel)
+                     {
+                         BooleanSpectrumPanel  bsPanel = (BooleanSpectrumPanel) sPanel;
+                         bsPanel.clearModel();
+                     }
         }
         all_spectrum_atts.removeErrorListener(errorHistory);
 	
@@ -1921,10 +1973,12 @@ public class MainPanel extends javax.swing.JFrame {
         SpectrumPanel                               sp_panel;
         StringSpectrumPanel                         str_sp_panel;
         DevStateSpectrumPanel                       ds_sp_panel;
+        BooleanSpectrumPanel                        bool_sp_panel;
 	IEntity                                     spectrum_att = null;
 	INumberSpectrum                             nb_spectrum_att = null;
 	IStringSpectrum                             str_spectrum_att = null;
         IDevStateSpectrum                           ds_spectrum_att = null;
+        IBooleanSpectrum                            bool_spectrum_att = null;
         fr.esrf.tangoatk.core.AttributeList         all_sorted_spectrum_atts;
 
 	
@@ -2012,6 +2066,18 @@ public class MainPanel extends javax.swing.JFrame {
                        jTabbedPane1.addTab(ds_spectrum_att.getNameSansDevice(), ds_sp_panel);
                        all_spectrum_panels.add(idx, ds_sp_panel);
                    }
+                   else
+                   {
+                       if (spectrum_att instanceof IBooleanSpectrum)
+                       {
+                           bool_spectrum_att = (IBooleanSpectrum) spectrum_att;
+                           // Create one Boolean Spectrum Panel per Boolean Spectrum Attribute
+                           bool_sp_panel = new BooleanSpectrumPanel(bool_spectrum_att);
+                           // Add the spectrum panel as a tab into the tabbed panel of the main frame
+                           jTabbedPane1.addTab(bool_spectrum_att.getNameSansDevice(), bool_sp_panel);
+                           all_spectrum_panels.add(idx, bool_sp_panel);
+                       }
+                   }
                }
 	    }
         }
@@ -2025,6 +2091,7 @@ public class MainPanel extends javax.swing.JFrame {
        INumberSpectrum      nSpecAtt = null;
        IStringSpectrum      strSpecAtt = null;
        IDevStateSpectrum    dsSpecAtt = null;
+       IBooleanSpectrum     boolSpecAtt = null;
        int                  ind, specInd;
        
        
@@ -2073,6 +2140,21 @@ public class MainPanel extends javax.swing.JFrame {
                        ind--;//tab has been removed, index adapted
                     }
                  }
+                 else
+                 {
+                     if (specPanel instanceof BooleanSpectrumPanel)
+                     {
+                         BooleanSpectrumPanel boolsp = (BooleanSpectrumPanel) specPanel;                         
+                         boolSpecAtt = boolsp.getModel();
+                         specInd = op_spectrum_atts.indexOf(boolSpecAtt);
+                         if (specInd < 0)
+                         {
+                             jTabbedPane1.removeTabAt(ind);
+                             nb_tabs = jTabbedPane1.getTabCount();
+                             ind--;//tab has been removed, index adapted
+                         }
+                     }
+                 }
              }
 	  }
        }
@@ -2088,9 +2170,11 @@ public class MainPanel extends javax.swing.JFrame {
        SpectrumPanel          specPanel = null;
        StringSpectrumPanel    strspecPanel = null;
        DevStateSpectrumPanel  dsspecPanel = null;
+       BooleanSpectrumPanel   boolspecPanel = null;
        INumberSpectrum        nSpecAtt = null;
        IStringSpectrum        strSpecAtt = null;
        IDevStateSpectrum      dsSpecAtt = null;
+       IBooleanSpectrum       boolSpecAtt = null;
        int                    ind, specInd;
        
        
@@ -2144,7 +2228,24 @@ public class MainPanel extends javax.swing.JFrame {
         	         jTabbedPane1.addTab(dsSpecAtt.getNameSansDevice(), dsspecPanel);
 		      }
 		    }
-	         }                 
+	         }
+                 else
+                 {
+                     if (obj instanceof IBooleanSpectrum)
+                     {
+                         boolSpecAtt = (IBooleanSpectrum) obj;
+                         specInd = jTabbedPane1.indexOfTab(boolSpecAtt.getNameSansDevice());
+                         if (specInd < 0) // This spectrum is not currently in the tabbed pane
+                         {
+                             spPanel = all_spectrum_panels.get(ind);
+                             if (spPanel instanceof BooleanSpectrumPanel)
+                             {
+                                 boolspecPanel = (BooleanSpectrumPanel) spPanel;
+                                 jTabbedPane1.addTab(boolSpecAtt.getNameSansDevice(), boolspecPanel);
+                             }
+                         }
+                     }
+                 }
               }
 	  }
        }
@@ -2644,6 +2745,7 @@ public class MainPanel extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem boolTrendJMenuItem;
+    private javax.swing.JMenuItem tgDevTestJMenuItem;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem diagJMenuItem;
     private javax.swing.JMenu jMenu2;

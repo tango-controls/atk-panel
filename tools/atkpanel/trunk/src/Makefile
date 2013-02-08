@@ -89,6 +89,7 @@ JC_FLAGS = -g -classpath $(CL_PATH)
 CLS	=	SpectrumPanel.class \
 		StringSpectrumPanel.class \
 		DevStateSpectrumPanel.class \
+		BooleanSpectrumPanel.class \
 		ImagePanel.class \
 		StringImagePanel.class \
 		RawImagePanel.class \
