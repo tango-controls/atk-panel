@@ -1,6 +1,7 @@
 /*
  *
- *   Copyright (C) :	2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012
+ *   Copyright (C) :	2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,
+ *                      2013
  *			European Synchrotron Radiation Facility
  *			BP 220, Grenoble 38043
  *			FRANCE
@@ -117,7 +118,7 @@ public class MainPanel extends javax.swing.JFrame {
 
     private boolean refresherActivated = true;
 
-    private static final String                     REVISION="Revision: 4.5 ";
+    private static final String                     REVISION="Revision: 4.6 ";
     
     private JDialog                                 tgDevtestDlg = null;
 
@@ -318,7 +319,7 @@ public class MainPanel extends javax.swing.JFrame {
         
         
 	splash.setTitle("AtkPanel  "+ versNumber);
-	splash.setCopyright("(c) ESRF 2002-2012");
+	splash.setCopyright("(c) ESRF 2002-2013");
 	splash.setMessage("Waiting for device-name...");
 	splash.initProgress();
         splash.setMaxProgress(12);
