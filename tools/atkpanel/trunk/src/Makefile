@@ -79,8 +79,9 @@ endif
 JC      = $(JAVAC) -d $(CLASS_HOME)
 ATK_CLS = $(LIB_HOME)/ATKCore.jar:$(LIB_HOME)/ATKWidget.jar
 #ATK_CLS = /users/poncet/atk/lib
+JIVE_CLS = $(TANGO_HOME)/release/java/appli/Jive.jar
 TANGO_CLS = $(LIB_HOME)/TangORB.jar
-CL_PATH = $(CLASS_HOME):$(ATK_CLS):$(TANGO_CLS)
+CL_PATH = $(CLASS_HOME):$(ATK_CLS):$(JIVE_CLS):$(TANGO_CLS)
 JC_FLAGS = -g -classpath $(CL_PATH)
 #JC_FLAGS = -g -deprecation -Xlint:unchecked -classpath $(CL_PATH)
 
