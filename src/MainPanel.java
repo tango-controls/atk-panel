@@ -45,6 +45,7 @@ package atkpanel;
  * @author  poncet
  */
 
+import fr.esrf.Tango.DevFailed;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -56,6 +57,8 @@ import fr.esrf.tangoatk.widget.util.ErrorHistory;
 import fr.esrf.tangoatk.widget.util.ErrorPopup;
 import fr.esrf.tangoatk.widget.attribute.*;
 import fr.esrf.tangoatk.widget.util.ATKGraphicsUtils;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 public class MainPanel extends javax.swing.JFrame {
 
@@ -303,6 +306,36 @@ public class MainPanel extends javax.swing.JFrame {
         }
         initComponents();
 	startUp();
+    }
+ 
+    
+    private void createDevTestPanel(String devName) throws ClassNotFoundException, NoSuchMethodException,
+                 InstantiationException, IllegalAccessException, IllegalArgumentException,
+                 InvocationTargetException, DevFailed
+    {
+        Class jiveExecDevClass = Class.forName("jive.ExecDev");
+
+        //Find the appropriate constructor
+        Class[] paramCls = new Class[1];
+        paramCls[0] = devName.getClass();
+        Constructor devTestPanelNew = jiveExecDevClass.getConstructor(paramCls);
+
+        //Instantiate the panel for devName
+        Object[] params = new Object[1];
+        params[0] = devName;
+        Object obj = devTestPanelNew.newInstance(params);
+
+        if (obj != null)
+        {
+            if (obj instanceof JPanel)
+            {
+                JPanel devTestPanel = (JPanel) obj;
+                tgDevtestDlg.setContentPane(devTestPanel);
+                return;
+            }
+        }
+        
+        tgDevtestDlg = null;
     }
     
     
@@ -772,23 +805,50 @@ public class MainPanel extends javax.swing.JFrame {
 	this.setTitle("AtkPanel "+versNumber+" : "+devName);
         tgDevtestDlg = new JDialog(this, false);
         tgDevtestDlg.setTitle("Test Device : "+devName);
+        
         try
         {
-            jive.ExecDev devTestPanel = new jive.ExecDev(devName);
-            tgDevtestDlg.setContentPane(devTestPanel);
-            
-        } catch (Exception ex)
+            createDevTestPanel(devName);    
+        } 
+        catch (ClassNotFoundException ex)
         {
             tgDevtestDlg = null;
-            tgDevTestJMenuItem.setEnabled(false);
+        } 
+        catch (NoSuchMethodException ex)
+        {
+            tgDevtestDlg = null;
+        } 
+        catch (IllegalArgumentException ex)
+        {
+            tgDevtestDlg = null;
+        } 
+        catch (InvocationTargetException ex)
+        {
+            tgDevtestDlg = null;
+        } 
+        catch (InstantiationException ex)
+        {
+            tgDevtestDlg = null;
+        } 
+        catch (IllegalAccessException ex)
+        {
+            tgDevtestDlg = null;
+        } 
+        catch (DevFailed ex)
+        {
+            tgDevtestDlg = null;
         }
-	return true;
-    }
+        
+        return true;
+   }
     
 
     private void startUp()
     {	
-	
+	if (tgDevtestDlg == null)
+        {
+            tgDevTestJMenuItem.setEnabled(false);
+        }
 	String message = "Initializing commands...";
 	splash.setMessage(message);
 		
@@ -1468,7 +1528,11 @@ public class MainPanel extends javax.swing.JFrame {
 
     private void testDeviceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testDeviceActionPerformed
         // Add your handling code here:
-        if (tgDevtestDlg == null) return;
+        if (tgDevtestDlg == null)
+        {
+            tgDevTestJMenuItem.setEnabled(false);
+            return;
+        }
 
         ATKGraphicsUtils.centerDialog(tgDevtestDlg);
         
