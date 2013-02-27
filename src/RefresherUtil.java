@@ -76,6 +76,11 @@ public class RefresherUtil {
 			RawImagePanel rawImgComp = (RawImagePanel)comp;
 			rawImgComp.getModel().setSkippingRefresh(false);
 		}
+		if(comp instanceof BooleanSpectrumPanel)
+		{
+			BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel)comp;
+			bssComp.getModel().setSkippingRefresh(false);
+		}		
 	}
 	
 	public static void refresh(Component comp)
@@ -109,6 +114,12 @@ public class RefresherUtil {
 			DevStateSpectrumPanel dssComp = (DevStateSpectrumPanel)comp;
                         IDevStateSpectrum     idss = dssComp.getModel();
 			refreshIfNeeded(idss);
+		}		
+		if(comp instanceof BooleanSpectrumPanel)
+		{
+			BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel)comp;
+                        IBooleanSpectrum     ibss = bssComp.getModel();
+			refreshIfNeeded(ibss);
 		}		
 		if(comp instanceof RawImagePanel)
 		{
@@ -144,6 +155,11 @@ public class RefresherUtil {
 		{
 			DevStateSpectrumPanel dssComp = (DevStateSpectrumPanel)comp;
 			dssComp.getModel().setSkippingRefresh(true);
+		}		
+		if(comp instanceof BooleanSpectrumPanel)
+		{
+			BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel)comp;
+			bssComp.getModel().setSkippingRefresh(true);
 		}		
 		if(comp instanceof RawImagePanel)
 		{
