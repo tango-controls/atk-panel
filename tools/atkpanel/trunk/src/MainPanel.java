@@ -121,7 +121,7 @@ public class MainPanel extends javax.swing.JFrame {
 
     private boolean refresherActivated = true;
 
-    private static final String                     REVISION="Revision: 4.7 ";
+    private static final String                     REVISION="Revision: 4.8 ";
     
     private JDialog                                 tgDevtestDlg = null;
 
@@ -805,7 +805,7 @@ public class MainPanel extends javax.swing.JFrame {
 	this.setTitle("AtkPanel "+versNumber+" : "+devName);
         tgDevtestDlg = new JDialog(this, false);
         tgDevtestDlg.setTitle("Test Device : "+devName);
-        
+                
         try
         {
             createDevTestPanel(devName);    
