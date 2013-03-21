@@ -797,10 +797,7 @@ public class MainPanel extends javax.swing.JFrame {
         }
         
         if (roMode)
-        {
-            tgDevTestJMenuItem.setVisible(false);
             return true;
-        }
 	
 	this.setTitle("AtkPanel "+versNumber+" : "+devName);
         tgDevtestDlg = new JDialog(this, false);
