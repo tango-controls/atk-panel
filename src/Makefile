@@ -64,15 +64,8 @@ LIB_HOME = $(TANGO_HOME)/release/java/lib
 
 
 #               The JAVA Compilers for UNIX
-ifdef _solaris9
-JAVAC = javac
-JAR = jar
-endif
-
-ifdef _redhate4
-JAVAC = javac
-JAR = jar
-endif
+# JAVAC : defined in env
+# JAR : defined in env
 
 
 
