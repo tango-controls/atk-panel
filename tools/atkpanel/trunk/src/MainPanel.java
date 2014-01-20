@@ -124,6 +124,8 @@ public class MainPanel extends javax.swing.JFrame {
     private static final String                     REVISION="Revision: 4.8 ";
     
     private JDialog                                 tgDevtestDlg = null;
+    
+    private static int[]                            wpos = null;
 
     /** Creates new form AtkPanel */
     
@@ -352,7 +354,7 @@ public class MainPanel extends javax.swing.JFrame {
         
         
 	splash.setTitle("AtkPanel  "+ versNumber);
-	splash.setCopyright("(c) ESRF 2002-2013");
+	splash.setCopyright("(c) ESRF 2002-2014");
 	splash.setMessage("Waiting for device-name...");
 	splash.initProgress();
         splash.setMaxProgress(12);
@@ -1014,7 +1016,10 @@ public class MainPanel extends javax.swing.JFrame {
 	splash.setVisible(false);
 	
    	pack();
-        ATKGraphicsUtils.centerFrameOnScreen(this);
+        if (wpos == null)
+            ATKGraphicsUtils.centerFrameOnScreen(this);
+        else
+            ATKGraphicsUtils.positionFrameOnScreen(this, wpos[0], wpos[1]);
         setVisible(true);
 
         //DeviceFactory.getInstance().setTraceMode(DeviceFactory.TRACE_REFRESHER);
@@ -2746,8 +2751,8 @@ public class MainPanel extends javax.swing.JFrame {
         return null;
     }
 
-    
 
+    
     
      
     /**
@@ -2760,7 +2765,8 @@ public class MainPanel extends javax.swing.JFrame {
           new MainPanel((String) null, true, false); // modifPropButton and roMode = leur default values
        else // args.length > 0
        {
-	   boolean ro = getReadOnly(args);
+	   wpos = ATKGraphicsUtils.getWindowPosFromArgs(args);
+           boolean ro = getReadOnly(args);
            String  dev_name = getDevName(args);
            String  tab_name = getTabName(args);
            if (dev_name == null) // no device name defined, ignore the tab name because does not make sens
