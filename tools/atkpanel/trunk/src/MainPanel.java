@@ -1,7 +1,7 @@
 /*
  *
  *   Copyright (C) :	2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,
- *                      2013
+ *                      2013, 2014, 2015
  *			European Synchrotron Radiation Facility
  *			BP 220, Grenoble 38043
  *			FRANCE
@@ -81,7 +81,7 @@ public class MainPanel extends javax.swing.JFrame {
     private  fr.esrf.tangoatk.core.AttributeList    op_scalar_atts;  /* used for operator attributes */
     private  fr.esrf.tangoatk.core.AttributeList    exp_scalar_atts;  /* used for expert attributes */
     private  fr.esrf.tangoatk.core.AttributeList    state_status_atts; /* used for state and status attribute viewers */
-    private  fr.esrf.tangoatk.core.AttributePolledList    number_scalar_atts; /* used in the global trend */
+    private  fr.esrf.tangoatk.core.AttributePolledList    numberAndState_scalar_atts; /* used in the global trend */
     private  fr.esrf.tangoatk.core.AttributePolledList    boolean_scalar_atts; /* used in the boolean trend */
 
     private  fr.esrf.tangoatk.core.AttributeList    all_spectrum_atts; /* used in spectrum tabs */
@@ -121,11 +121,13 @@ public class MainPanel extends javax.swing.JFrame {
 
     private boolean refresherActivated = true;
 
-    private static final String                     REVISION="Revision: 4.9 ";
+    private static final String                     REVISION="Revision: 5.0 ";
     
     private JDialog                                 tgDevtestDlg = null;
     
     private static int[]                            wpos = null;
+    
+    private static int                              globalRefPeriod = 1000; // ms
 
     /** Creates new form AtkPanel */
     
@@ -354,7 +356,7 @@ public class MainPanel extends javax.swing.JFrame {
         
         
 	splash.setTitle("AtkPanel  "+ versNumber);
-	splash.setCopyright("(c) ESRF 2002-2014");
+	splash.setCopyright("(c) ESRF 2002-2015");
 	splash.setMessage("Waiting for device-name...");
 	splash.initProgress();
         splash.setMaxProgress(12);
@@ -368,6 +370,7 @@ public class MainPanel extends javax.swing.JFrame {
 		
 	// Keeps all scalar attributes operator or expert
         all_scalar_atts = new fr.esrf.tangoatk.core.AttributeList();
+        all_scalar_atts.setRefreshInterval(globalRefPeriod);
         all_scalar_atts.setFilter( new IEntityFilter () 
                          {
                             public boolean keep(IEntity entity)
@@ -440,16 +443,18 @@ public class MainPanel extends javax.swing.JFrame {
                          });
 	
         state_status_atts = new fr.esrf.tangoatk.core.AttributeList();
+        state_status_atts.setRefreshInterval(globalRefPeriod);
 	
 	// Keep only number scalar attributes operator or expert (used in global Trend)
-        number_scalar_atts = new fr.esrf.tangoatk.core.AttributePolledList();
-        number_scalar_atts.setFilter( new IEntityFilter () 
+        numberAndState_scalar_atts = new fr.esrf.tangoatk.core.AttributePolledList();
+        numberAndState_scalar_atts.setFilter( new IEntityFilter () 
                          {
                             public boolean keep(IEntity entity)
 			    {
-                               if (entity instanceof INumberScalar)
+                               if (    (entity instanceof INumberScalar)
+			            || (entity instanceof IDevStateScalar) )
 			       {
-				  String message = "Adding number scalar attributes(";
+				  String message = "Adding number/state scalar attributes to trend (";
 				  splash.setMessage(message + entity.getNameSansDevice() + ")...");
                                   return true;
                                }
@@ -476,6 +481,7 @@ public class MainPanel extends javax.swing.JFrame {
 	
 	// Keep all number spectrum attributes operator or expert
         all_spectrum_atts = new fr.esrf.tangoatk.core.AttributeList();
+        all_spectrum_atts.setRefreshInterval(globalRefPeriod);
         all_spectrum_atts.setFilter( new IEntityFilter () 
                          {
                             public boolean keep(IEntity entity)
@@ -521,6 +527,7 @@ public class MainPanel extends javax.swing.JFrame {
 	
 	
         all_number_image_atts = new fr.esrf.tangoatk.core.AttributeList();
+        all_number_image_atts.setRefreshInterval(globalRefPeriod);
 	// Keep only number image attributes
         all_number_image_atts.setFilter( new IEntityFilter () 
                          {
@@ -573,6 +580,7 @@ public class MainPanel extends javax.swing.JFrame {
 	
 	
         all_string_image_atts = new fr.esrf.tangoatk.core.AttributeList();
+        all_string_image_atts.setRefreshInterval(globalRefPeriod);
 	// Keep only string image attributes
         all_string_image_atts.setFilter( new IEntityFilter () 
                          {
@@ -611,6 +619,7 @@ public class MainPanel extends javax.swing.JFrame {
 	
 	
         all_raw_image_atts = new fr.esrf.tangoatk.core.AttributeList();
+        all_raw_image_atts.setRefreshInterval(globalRefPeriod);
 	// Keep only Raw image attributes
         all_raw_image_atts.setFilter( new IEntityFilter () 
                          {
@@ -742,7 +751,7 @@ public class MainPanel extends javax.swing.JFrame {
 	      splash.setMessage(message);
 	      op_scalar_atts.add(devName+"/*");
 	      exp_scalar_atts.add(devName+"/*");
-              number_scalar_atts.add(devName+"/*");
+              numberAndState_scalar_atts.add(devName+"/*");
               boolean_scalar_atts.add(devName+"/*");
 	      splash.progress(4);
               all_spectrum_atts.add(devName+"/*");
@@ -876,7 +885,7 @@ public class MainPanel extends javax.swing.JFrame {
         operatorScalarListViewer = null;
 	createAllScalarListViewers();
 	
-        globalTrend.setModel(number_scalar_atts);	
+        globalTrend.setModel(numberAndState_scalar_atts);	
         booleanTrend.setModel(boolean_scalar_atts);
 	
 	
@@ -1167,7 +1176,7 @@ public class MainPanel extends javax.swing.JFrame {
 	jMenu3.add(tgDevTestJMenuItem);
 
 
-	jMenuItem5.setText("Numeric Trend ");
+	jMenuItem5.setText("Numeric & State Trend ");
 	jMenuItem5.addActionListener(
 	     new java.awt.event.ActionListener()
 	         {
@@ -1361,14 +1370,17 @@ public class MainPanel extends javax.swing.JFrame {
     {
 	// skip refreshing for old focus component
 	//System.out.println("Previous Index : " + iTabbedPaneIndex);
-        if (jTabbedPane1.getTitleAt(iTabbedPaneIndex).equalsIgnoreCase("Scalar"))
+        if (iTabbedPaneIndex < jTabbedPane1.getTabCount())
         {
-            all_scalar_atts.stopRefresher();
-        }
-        else
-        {
-            Component comp = jTabbedPane1.getComponent(iTabbedPaneIndex);
-            RefresherUtil.skippingRefresh(comp);
+            if (jTabbedPane1.getTitleAt(iTabbedPaneIndex).equalsIgnoreCase("Scalar"))
+            {
+                all_scalar_atts.stopRefresher();
+            } 
+            else
+            {
+                Component comp = jTabbedPane1.getComponent(iTabbedPaneIndex);
+                RefresherUtil.skippingRefresh(comp);
+            }
         }
 
 
@@ -1443,7 +1455,7 @@ public class MainPanel extends javax.swing.JFrame {
 	all_number_image_atts.stopRefresher();
 	all_string_image_atts.stopRefresher();
         all_raw_image_atts.stopRefresher();
-	number_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
+	numberAndState_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
 	boolean_scalar_atts.stopRefresher(); /* AttributePolledList for booleanTrend */
         
 
@@ -1558,18 +1570,9 @@ public class MainPanel extends javax.swing.JFrame {
         // Add your handling code here:
 	
 	int  ref_period = -1;
-	ref_period = all_scalar_atts.getRefreshInterval();
-	if (ref_period == -1)
-	   ref_period = all_spectrum_atts.getRefreshInterval();
-	if (ref_period == -1)
-	   ref_period = all_number_image_atts.getRefreshInterval();
-	if (ref_period == -1)
-	   ref_period = all_string_image_atts.getRefreshInterval();
-	if (ref_period == -1)
-	   ref_period = all_raw_image_atts.getRefreshInterval();
-//	System.out.println("Initial ref period = "+(Integer.toString(ref_period)));
+//	System.out.println("Initial globalRefPeriod = "+(Integer.toString(globalRefPeriod)));
 
-        String refp_str = JOptionPane.showInputDialog(this,"Enter refresh interval (ms)",(Object) new Integer(ref_period));
+        String refp_str = JOptionPane.showInputDialog(this,"Enter refresh interval (ms)",(Object) new Integer(globalRefPeriod));
 	if ( refp_str != null )
 	{
 	    try
@@ -1577,7 +1580,9 @@ public class MainPanel extends javax.swing.JFrame {
         	int it = Integer.parseInt(refp_str);
 //		System.out.println("Set ref period to : "+it);
 
-		all_scalar_atts.setRefreshInterval(it);
+		globalRefPeriod = it;
+                
+                all_scalar_atts.setRefreshInterval(it);
 		all_spectrum_atts.setRefreshInterval(it);
 		all_number_image_atts.setRefreshInterval(it);
 		all_string_image_atts.setRefreshInterval(it);
@@ -1839,7 +1844,7 @@ public class MainPanel extends javax.swing.JFrame {
 	   all_number_image_atts.stopRefresher();
 	   all_string_image_atts.stopRefresher();
            all_raw_image_atts.stopRefresher();
-	   number_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
+	   numberAndState_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
 	   boolean_scalar_atts.stopRefresher(); /* AttributePolledList for booleanTrend */
 	   
            if (keepStateRefresher == false)
@@ -1890,7 +1895,7 @@ public class MainPanel extends javax.swing.JFrame {
 	   all_number_image_atts.stopRefresher();
 	   all_string_image_atts.stopRefresher();
            all_raw_image_atts.stopRefresher();
-	   number_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
+	   numberAndState_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
 	   boolean_scalar_atts.stopRefresher(); /* AttributePolledList for booleanTrend */
 	
 	   if (keepStateRefresher == false)
@@ -2710,7 +2715,53 @@ public class MainPanel extends javax.swing.JFrame {
         }
         return false;
     }
+  
+    static private int getRefIntervalFromArgs(String args[])
+    {
+        if (args.length <= 0) return -1;
 
+        String refIntStr = null;
+        int    refInterval = -1;
+        
+        for (int i = 0; i < args.length; i++)
+        {
+            if (args[i].equalsIgnoreCase("-refresh"))
+            {
+                i++;
+                if (i < args.length)
+                {
+                   refIntStr = args[i];
+                }
+                break;
+            }
+        }
+        
+        if (refIntStr == null) return -1;
+        
+        try
+        {
+            refInterval = Integer.parseInt(refIntStr);
+        } 
+        catch (Exception ex) {}
+        
+        return refInterval;
+    }
+
+    
+    static private boolean getExpertView(String args[])
+    {
+        if (args.length <= 0) return false;
+
+        for (int i=0; i<args.length; i++)
+        {
+            if (args[i].equalsIgnoreCase("-expert"))
+                return true;
+        }
+        return false;
+    }
+
+
+    
     private static String getDevName(String args[])
     {
         if (args.length <= 0)
@@ -2757,52 +2808,60 @@ public class MainPanel extends javax.swing.JFrame {
      
     /**
     * @param args the command line arguments
+    * -wpos xPosition,yPosition
+    * -ro (read-only mode)
+    * -refresh xxxx (refresh interval expressed in milli seconds
+    * -expert (start atkpanel in expert mode)
+    * deviceName (start atkpanel for the device)
     */
     public static void main(String args[])
     {
+       MainPanel  mp =null;
+       boolean    ro = false;
+       boolean    expertView = false;
+       
        // startup with standAlone=true, keepStateRefresher=false, modifPropButton=true, roMode=false
        if (args.length <= 0)
-          new MainPanel((String) null, true, false); // modifPropButton and roMode = leur default values
+          mp = new MainPanel((String) null, true, false); // modifPropButton and roMode = leur default values
        else // args.length > 0
        {
 	   wpos = ATKGraphicsUtils.getWindowPosFromArgs(args);
-           boolean ro = getReadOnly(args);
+           ro = getReadOnly(args);
+           expertView = getExpertView(args);
+           int     refIt = getRefIntervalFromArgs(args);
+           if (refIt > 0)
+               globalRefPeriod = refIt;
+               
            String  dev_name = getDevName(args);
            String  tab_name = getTabName(args);
            if (dev_name == null) // no device name defined, ignore the tab name because does not make sens
            {
                if (ro)
-                   new MainPanel(dev_name, true, false, false, true);
+                   mp = new MainPanel(dev_name, true, false, false, true);
                else
-                   new MainPanel(dev_name, true, false);
+                   mp = new MainPanel(dev_name, true, false);
            }
            else //dev_name specified, so we can examine tha tab_name if present
            {
                if (tab_name == null) // dev name specified but not tab_name
                {
                    if (ro)
-                       new MainPanel(dev_name, true, false, false, true);
+                       mp = new MainPanel(dev_name, true, false, false, true);
                    else
-                       new MainPanel(dev_name, true, false);
+                       mp = new MainPanel(dev_name, true, false);
                }
                else
                {
                    if (ro)
-                       new MainPanel(dev_name, tab_name, true, false, false, true);
+                       mp = new MainPanel(dev_name, tab_name, true, false, false, true);
                    else
-                       new MainPanel(dev_name, tab_name, true, false);
+                       mp = new MainPanel(dev_name, tab_name, true, false);
                }
            }
-
-           /*if (args[0].equalsIgnoreCase("-ro"))
-           new MainPanel(args[1], true, false, false, true);
-           else
-           if (args[1].equalsIgnoreCase("-ro"))
-           new MainPanel(args[0], true, false, false, true);
-           else
-           new MainPanel(args[0], true, false);*/
        }
-        
+       
+       if (mp != null)
+          mp.setExpertView(expertView);
     }
 
 
