@@ -481,6 +481,7 @@ public class MainPanel extends javax.swing.JFrame {
 	
 	// Keep all number spectrum attributes operator or expert
         all_spectrum_atts = new fr.esrf.tangoatk.core.AttributeList();
+        all_spectrum_atts.setForceRefresh(true);
         all_spectrum_atts.setRefreshInterval(globalRefPeriod);
         all_spectrum_atts.setFilter( new IEntityFilter () 
                          {
@@ -527,6 +528,7 @@ public class MainPanel extends javax.swing.JFrame {
 	
 	
         all_number_image_atts = new fr.esrf.tangoatk.core.AttributeList();
+        all_number_image_atts.setForceRefresh(true);
         all_number_image_atts.setRefreshInterval(globalRefPeriod);
 	// Keep only number image attributes
         all_number_image_atts.setFilter( new IEntityFilter () 
@@ -580,6 +582,7 @@ public class MainPanel extends javax.swing.JFrame {
 	
 	
         all_string_image_atts = new fr.esrf.tangoatk.core.AttributeList();
+        all_string_image_atts.setForceRefresh(true);
         all_string_image_atts.setRefreshInterval(globalRefPeriod);
 	// Keep only string image attributes
         all_string_image_atts.setFilter( new IEntityFilter () 
@@ -619,6 +622,7 @@ public class MainPanel extends javax.swing.JFrame {
 	
 	
         all_raw_image_atts = new fr.esrf.tangoatk.core.AttributeList();
+        all_raw_image_atts.setForceRefresh(true);
         all_raw_image_atts.setRefreshInterval(globalRefPeriod);
 	// Keep only Raw image attributes
         all_raw_image_atts.setFilter( new IEntityFilter () 
