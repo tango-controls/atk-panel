@@ -121,7 +121,7 @@ public class MainPanel extends javax.swing.JFrame {
 
     private boolean refresherActivated = true;
 
-    private static final String                     REVISION="Revision: 5.0 ";
+    private static final String                     REVISION="Revision: 5.1 ";
     
     private JDialog                                 tgDevtestDlg = null;
     
