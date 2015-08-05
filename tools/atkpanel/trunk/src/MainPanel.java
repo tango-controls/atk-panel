@@ -121,7 +121,7 @@ public class MainPanel extends javax.swing.JFrame {
 
     private boolean refresherActivated = true;
 
-    private static final String                     REVISION="Revision: 5.1 ";
+    private static final String                     REVISION="Revision: 5.2 ";
     
     private JDialog                                 tgDevtestDlg = null;
     
@@ -2772,13 +2772,24 @@ public class MainPanel extends javax.swing.JFrame {
             return (null);
         for (int i=0; i<args.length; i++)
         {
-            if (args[i].equalsIgnoreCase("-ro"))
-                continue;
             try
             {
                 if (args[i].contains("/"))
                 {
                     return (args[i]);
+                }
+                else // not a device name, may be a device alias
+                {
+                    Device dv = null;
+                    try
+                    {
+                        dv = new Device(args[i]);
+                        return (args[i]);  // the alias found in the database
+                    }
+                    catch (DevFailed df) // the alias is not found
+                    {
+//                        System.out.println(df); 
+                    }
                 }
             }
             catch (Exception ex) {}
@@ -2788,11 +2799,17 @@ public class MainPanel extends javax.swing.JFrame {
 
     private static String getTabName(String args[])
     {
-        if (args.length <= 1)
+        if (args.length < 1)
             return (null);
         for (int i=0; i<args.length; i++)
         {
             if (args[i].equalsIgnoreCase("-ro"))
+                continue;
+            if (args[i].equalsIgnoreCase("-expert"))
+                continue;
+            if (args[i].equalsIgnoreCase("-refresh"))
+                continue;
+            if (args[i].equalsIgnoreCase("-wpos"))
                 continue;
             try
             {
@@ -2807,7 +2824,93 @@ public class MainPanel extends javax.swing.JFrame {
     }
 
 
-    
+    private static String[] removeArg(String args[], String option)
+    {
+        ArrayList<String> al = new ArrayList<String>();
+        
+        if (option.equalsIgnoreCase("-wpos"))
+        {
+            for (int i = 0; i < args.length; i++)
+            {
+                if (args[i].equalsIgnoreCase("-wpos"))
+                {
+                    i++;
+                }
+                else
+                {
+                    al.add(args[i]);
+                }
+            }
+            String[] newArgs = new String[al.size()];
+            newArgs = al.toArray(newArgs);
+            return newArgs;
+        }
+        
+        if (option.equalsIgnoreCase("-refresh"))
+        {
+            for (int i = 0; i < args.length; i++)
+            {
+                if (args[i].equalsIgnoreCase("-refresh"))
+                {
+                    i++;
+                }
+                else
+                {
+                    al.add(args[i]);
+                }
+            }
+            String[] newArgs = new String[al.size()];
+            newArgs = al.toArray(newArgs);
+            return newArgs;
+        }
+        
+        if (option.equalsIgnoreCase("-expert"))
+        {
+            for (int i = 0; i < args.length; i++)
+            {
+                if (!args[i].equalsIgnoreCase("-expert"))
+                {
+                    al.add(args[i]);
+                }
+            }
+            String[] newArgs = new String[al.size()];
+            newArgs = al.toArray(newArgs);
+            return newArgs;
+        }
+        
+        if (option.equalsIgnoreCase("-ro"))
+        {
+            for (int i = 0; i < args.length; i++)
+            {
+                if (!args[i].equalsIgnoreCase("-ro"))
+                {
+                    al.add(args[i]);
+                }
+            }
+            String[] newArgs = new String[al.size()];
+            newArgs = al.toArray(newArgs);
+            return newArgs;
+        }
+        
+        for (int i = 0; i < args.length; i++)  // option is dev_name != null
+        {
+            if (!args[i].equalsIgnoreCase(option))
+            {
+                al.add(args[i]);
+            }
+        }
+        
+        if (al.isEmpty())
+        {
+            return args;
+        }
+        else
+        {
+            String[] newArgs = new String[al.size()];
+            newArgs = al.toArray(newArgs);
+            return newArgs;
+        }
+    }
     
      
     /**
@@ -2830,14 +2933,37 @@ public class MainPanel extends javax.swing.JFrame {
        else // args.length > 0
        {
 	   wpos = ATKGraphicsUtils.getWindowPosFromArgs(args);
-           ro = getReadOnly(args);
-           expertView = getExpertView(args);
+           if (wpos != null)
+           {
+               args = removeArg(args, "-wpos");
+           }
+           
            int     refIt = getRefIntervalFromArgs(args);
            if (refIt > 0)
+           {
                globalRefPeriod = refIt;
-               
+               args = removeArg(args, "-refresh");
+           }
+           
+           expertView = getExpertView(args);
+           if (expertView == true)
+           {
+               args = removeArg(args, "-expert");
+           }               
+           
+           ro = getReadOnly(args);           
+           if (ro == true)
+           {
+               args = removeArg(args, "-ro");
+           }
+           
            String  dev_name = getDevName(args);
+           if (dev_name != null)
+           {
+               args = removeArg(args, dev_name);
+           }
            String  tab_name = getTabName(args);
+
            if (dev_name == null) // no device name defined, ignore the tab name because does not make sens
            {
                if (ro)
