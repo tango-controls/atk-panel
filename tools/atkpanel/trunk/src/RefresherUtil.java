@@ -42,203 +42,191 @@ package atkpanel;
 import java.awt.Component;
 import fr.esrf.tangoatk.core.*;
 
-public class RefresherUtil {
+class RefresherUtil {
+    
+        static private AttributeList spectOrImageRefresherAttList = new AttributeList();
+        static private boolean       isRefreshing = false;
 
-	public static void activateRefresh(Component comp)
+
+        static void startTabsRefresher()
+        {
+            isRefreshing = true;
+            if (!spectOrImageRefresherAttList.isEmpty())
+                spectOrImageRefresherAttList.startRefresher();
+        }
+
+        static void stopTabsRefresher()
+        {
+            isRefreshing = false;
+            spectOrImageRefresherAttList.stopRefresher();
+        }
+
+        static void setTabsRefreshInterval(int refIt)
+        {
+            spectOrImageRefresherAttList.setRefreshInterval(refIt);
+        }
+        
+        static boolean isRefreshing()
+        {
+            return isRefreshing;
+        }
+        
+        
+	static void enableComponentRefresh(Component comp)
 	{
-		if(comp instanceof ImagePanel)
+	    boolean  previousState = isRefreshing;
+            stopTabsRefresher();
+                if(comp instanceof ImagePanel)
 		{
 			ImagePanel imgComp = (ImagePanel)comp;
-			imgComp.getModel().setSkippingRefresh(false);
+                        IAttribute  iatt = imgComp.getModel();
+                        spectOrImageRefresherAttList.add(iatt);
 		}
 		if(comp instanceof SpectrumPanel)
 		{
 			SpectrumPanel specComp = (SpectrumPanel)comp;
-			specComp.getModel().setSkippingRefresh(false);
+                        IAttribute  iatt = specComp.getModel();
+                        spectOrImageRefresherAttList.add(iatt);
 		}
 		if(comp instanceof StringSpectrumPanel)
 		{
 			StringSpectrumPanel specComp = (StringSpectrumPanel)comp;
-			specComp.getModel().setSkippingRefresh(false);
+                        IAttribute  iatt = specComp.getModel();
+                        spectOrImageRefresherAttList.add(iatt);
 		}		
 		if(comp instanceof StringImagePanel)
 		{
 			StringImagePanel imgComp = (StringImagePanel)comp;
-			imgComp.getModel().setSkippingRefresh(false);
+                        IAttribute  iatt = imgComp.getModel();
+                        spectOrImageRefresherAttList.add(iatt);
 		}		
 		if(comp instanceof DevStateSpectrumPanel)
 		{
 			DevStateSpectrumPanel dssComp = (DevStateSpectrumPanel)comp;
-			dssComp.getModel().setSkippingRefresh(false);
+                        IAttribute  iatt = dssComp.getModel();
+                        spectOrImageRefresherAttList.add(iatt);
 		}		
 		if(comp instanceof RawImagePanel)
 		{
 			RawImagePanel rawImgComp = (RawImagePanel)comp;
-			rawImgComp.getModel().setSkippingRefresh(false);
+                        IAttribute  iatt = rawImgComp.getModel();
+                        spectOrImageRefresherAttList.add(iatt);
 		}
 		if(comp instanceof BooleanSpectrumPanel)
 		{
 			BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel)comp;
-			bssComp.getModel().setSkippingRefresh(false);
-		}		
+                        IAttribute  iatt = bssComp.getModel();
+                        spectOrImageRefresherAttList.add(iatt);
+		}
+            
+            if (previousState)
+                startTabsRefresher();
 	}
 	
-	public static void refresh(Component comp)
+	static void refreshComponent(Component comp)
 	{
 		if(comp instanceof ImagePanel)
 		{
 			ImagePanel    imgComp = (ImagePanel)comp;
-			INumberImage  ini = imgComp.getModel();
-			refreshIfNeeded(ini);
+                        IAttribute    iatt = imgComp.getModel();
+                        iatt.refresh();
 		}
 		if(comp instanceof SpectrumPanel)
 		{
 			SpectrumPanel    spectComp = (SpectrumPanel)comp;
-			INumberSpectrum  ins = spectComp.getModel();
-			refreshIfNeeded(ins);
+                        IAttribute       iatt = spectComp.getModel();
+                        iatt.refresh();
 		}
 		if(comp instanceof StringSpectrumPanel)
 		{
 			StringSpectrumPanel strSpectComp = (StringSpectrumPanel)comp;
-			IStringSpectrum     iss = strSpectComp.getModel();
-			refreshIfNeeded(iss);
+                        IAttribute       iatt = strSpectComp.getModel();
+                        iatt.refresh();
 		}		
 		if(comp instanceof StringImagePanel)
 		{
 			StringImagePanel    strImageComp = (StringImagePanel)comp;
-			IStringImage        isi = strImageComp.getModel();
-			refreshIfNeeded(isi);
+                        IAttribute       iatt = strImageComp.getModel();
+                        iatt.refresh();
 		}		
 		if(comp instanceof DevStateSpectrumPanel)
 		{
 			DevStateSpectrumPanel dssComp = (DevStateSpectrumPanel)comp;
-                        IDevStateSpectrum     idss = dssComp.getModel();
-			refreshIfNeeded(idss);
+                        IAttribute       iatt = dssComp.getModel();
+                        iatt.refresh();
 		}		
 		if(comp instanceof BooleanSpectrumPanel)
 		{
 			BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel)comp;
-                        IBooleanSpectrum     ibss = bssComp.getModel();
-			refreshIfNeeded(ibss);
+                        IAttribute       iatt = bssComp.getModel();
+                        iatt.refresh();
 		}		
 		if(comp instanceof RawImagePanel)
 		{
 			RawImagePanel  rawImgComp = (RawImagePanel)comp;
-			IRawImage      iri = rawImgComp.getModel();
-			refreshIfNeeded(iri);
+                        IAttribute       iatt = rawImgComp.getModel();
+                        iatt.refresh();
 		}
 	}	
 	
-	public static void skippingRefresh(Component comp)
+	static void disableRefreshComponent(Component comp)
 	{
-		if(comp instanceof ImagePanel)
+	    boolean  previousState = isRefreshing;
+            stopTabsRefresher();
+
+                if(comp instanceof ImagePanel)
 		{
 			ImagePanel imgComp = (ImagePanel)comp;
-			imgComp.getModel().setSkippingRefresh(true);
+                        IAttribute  iatt = imgComp.getModel();
+                        spectOrImageRefresherAttList.remove(iatt.getName());
 		}
 		if(comp instanceof SpectrumPanel)
 		{
 			SpectrumPanel specComp = (SpectrumPanel)comp;
-			specComp.getModel().setSkippingRefresh(true);
+                        IAttribute  iatt = specComp.getModel();
+                        spectOrImageRefresherAttList.remove(iatt.getName());
 		}
 		if(comp instanceof StringSpectrumPanel)
 		{
 			StringSpectrumPanel specComp = (StringSpectrumPanel)comp;
-			specComp.getModel().setSkippingRefresh(true);
+                        IAttribute  iatt = specComp.getModel();
+                        spectOrImageRefresherAttList.remove(iatt.getName());
 		}		
 		if(comp instanceof StringImagePanel)
 		{
 			StringImagePanel imgComp = (StringImagePanel)comp;
-			imgComp.getModel().setSkippingRefresh(true);
+                        IAttribute  iatt = imgComp.getModel();
+                        spectOrImageRefresherAttList.remove(iatt.getName());
 		}		
 		if(comp instanceof DevStateSpectrumPanel)
 		{
 			DevStateSpectrumPanel dssComp = (DevStateSpectrumPanel)comp;
-			dssComp.getModel().setSkippingRefresh(true);
+                        IAttribute  iatt = dssComp.getModel();
+                        spectOrImageRefresherAttList.remove(iatt.getName());
 		}		
 		if(comp instanceof BooleanSpectrumPanel)
 		{
 			BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel)comp;
-			bssComp.getModel().setSkippingRefresh(true);
+                        IAttribute  iatt = bssComp.getModel();
+                        spectOrImageRefresherAttList.remove(iatt.getName());
 		}		
 		if(comp instanceof RawImagePanel)
 		{
 			RawImagePanel   rawImgComp = (RawImagePanel)comp;
-			rawImgComp.getModel().setSkippingRefresh(true);
+                        IAttribute  iatt = rawImgComp.getModel();
+                        spectOrImageRefresherAttList.remove(iatt.getName());
 		}
+            if (previousState)
+                startTabsRefresher();
 	}
 	
-	public static void activateRefreshForAllComponent(javax.swing.JTabbedPane jtabbedPane)
+	static void refreshAllComponents(javax.swing.JTabbedPane jtabbedPane)
 	{
 		Component[] components = jtabbedPane.getComponents();
 		for(int i=0;i < components.length;i++)
 		{
-			activateRefresh(components[i]);
+			refreshComponent(components[i]);
 		}
 	}
 	
-	public static void skippingRefreshForAllComponent(javax.swing.JTabbedPane jtabbedPane)
-	{
-		Component[] components = jtabbedPane.getComponents();
-		for(int i=0;i < components.length;i++)
-		{
-			skippingRefresh(components[i]);
-		}		
-	}
-	
-	public static void refreshIfNeeded(IAttribute  iatt)
-	{ // call refresh() if and only if the attribute is not updated thanks to the Tango events
-	        if (!iatt.hasEvents()) // events are not possible for this attribute (event subscription failed)
-        	{
-        		iatt.refresh();
-        	}
-
-	}
-        
-        public static void skippingRefreshForAllAttributes(AttributeList attl)
-        {
-            IAttribute    iatt = null;
-            int           nb_atts = attl.getSize();
-            for (int idx=0; idx < nb_atts; idx++)
-            {
-                iatt = (IAttribute) attl.getElementAt(idx);
-                iatt.setSkippingRefresh(true);
-            }
-        }
-
-        public static void activateRefreshForAllAttributes(AttributeList attl)
-        {
-            IAttribute    iatt = null;
-            int           nb_atts = attl.getSize();
-            for (int idx=0; idx < nb_atts; idx++)
-            {
-                iatt = (IAttribute) attl.getElementAt(idx);
-                iatt.setSkippingRefresh(false);
-            }
-        }
-        
-        public static void skippingRefreshForExpertAttributes(AttributeList attl)
-        {
-            IAttribute    iatt = null;
-            int           nb_atts = attl.getSize();
-            for (int idx=0; idx < nb_atts; idx++)
-            {
-                iatt = (IAttribute) attl.getElementAt(idx);
-                if (iatt.isExpert())
-                   iatt.setSkippingRefresh(true);
-            }
-        }
-        
-        public static void activateRefreshForExpertAttributes(AttributeList attl)
-        {
-            IAttribute    iatt = null;
-            int           nb_atts = attl.getSize();
-            for (int idx=0; idx < nb_atts; idx++)
-            {
-                iatt = (IAttribute) attl.getElementAt(idx);
-                if (iatt.isExpert())
-                   iatt.setSkippingRefresh(false);
-            }
-        }
-		
 }

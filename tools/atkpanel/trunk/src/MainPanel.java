@@ -121,7 +121,7 @@ public class MainPanel extends javax.swing.JFrame {
 
     private boolean refresherActivated = true;
 
-    private static final String                     REVISION="Revision: 5.2 ";
+    private static final String                     REVISION="Revision: 5.3 ";
     
     private JDialog                                 tgDevtestDlg = null;
     
@@ -478,11 +478,11 @@ public class MainPanel extends javax.swing.JFrame {
                             }
                          });
 
+        RefresherUtil.setTabsRefreshInterval(globalRefPeriod);
 	
 	// Keep all number spectrum attributes operator or expert
         all_spectrum_atts = new fr.esrf.tangoatk.core.AttributeList();
         all_spectrum_atts.setForceRefresh(true);
-        all_spectrum_atts.setRefreshInterval(globalRefPeriod);
         all_spectrum_atts.setFilter( new IEntityFilter () 
                          {
                             public boolean keep(IEntity entity)
@@ -529,7 +529,6 @@ public class MainPanel extends javax.swing.JFrame {
 	
         all_number_image_atts = new fr.esrf.tangoatk.core.AttributeList();
         all_number_image_atts.setForceRefresh(true);
-        all_number_image_atts.setRefreshInterval(globalRefPeriod);
 	// Keep only number image attributes
         all_number_image_atts.setFilter( new IEntityFilter () 
                          {
@@ -583,7 +582,6 @@ public class MainPanel extends javax.swing.JFrame {
 	
         all_string_image_atts = new fr.esrf.tangoatk.core.AttributeList();
         all_string_image_atts.setForceRefresh(true);
-        all_string_image_atts.setRefreshInterval(globalRefPeriod);
 	// Keep only string image attributes
         all_string_image_atts.setFilter( new IEntityFilter () 
                          {
@@ -623,7 +621,6 @@ public class MainPanel extends javax.swing.JFrame {
 	
         all_raw_image_atts = new fr.esrf.tangoatk.core.AttributeList();
         all_raw_image_atts.setForceRefresh(true);
-        all_raw_image_atts.setRefreshInterval(globalRefPeriod);
 	// Keep only Raw image attributes
         all_raw_image_atts.setFilter( new IEntityFilter () 
                          {
@@ -898,7 +895,6 @@ public class MainPanel extends javax.swing.JFrame {
 	{
 	   if (operatorView == true) // display only operator level scalar attributes
 	   {
-              RefresherUtil.skippingRefreshForExpertAttributes(all_scalar_atts);
               show_operator_scalars();
 	      expertCheckBoxMenuItem.setState(false);
 	      operatorCheckBoxMenuItem.setState(true);
@@ -960,7 +956,6 @@ public class MainPanel extends javax.swing.JFrame {
 	splash.setMessage(message);
         
 		
-        RefresherUtil.skippingRefreshForAllAttributes(all_spectrum_atts);
         createAllSpectrumTabs();
 	if (all_spectrum_atts.getSize() > 0)
 	{
@@ -976,7 +971,6 @@ public class MainPanel extends javax.swing.JFrame {
 	splash.setMessage(message);
         
 		
-        RefresherUtil.skippingRefreshForAllAttributes(all_number_image_atts);
         createAllNumberImageTabs();
 	if (all_number_image_atts.getSize() > 0)
 	{
@@ -987,7 +981,6 @@ public class MainPanel extends javax.swing.JFrame {
 	}
         
 		
-        RefresherUtil.skippingRefreshForAllAttributes(all_string_image_atts);
         createAllStringImageTabs();
 	if (all_string_image_atts.getSize() > 0)
 	{
@@ -998,7 +991,6 @@ public class MainPanel extends javax.swing.JFrame {
 	}
         
 		
-        RefresherUtil.skippingRefreshForAllAttributes(all_raw_image_atts);
         createAllRawImageTabs();
 	if (all_raw_image_atts.getSize() > 0)
 	{
@@ -1058,11 +1050,9 @@ public class MainPanel extends javax.swing.JFrame {
             try
             {
                 jTabbedPane1.setSelectedIndex(startupTabIndex);
-                //setSelectedTabbedPaneIndex(startupTabIndex);
             }
             catch (IndexOutOfBoundsException iobex)
             {
-                return;
             }
         }
     }
@@ -1372,33 +1362,40 @@ public class MainPanel extends javax.swing.JFrame {
     
     private void setSelectedTabbedPaneIndex(int  tabIndex)
     {
-	// skip refreshing for old focus component
+	// stop refreshing for old focus component
 	//System.out.println("Previous Index : " + iTabbedPaneIndex);
+        boolean    previousCompWasRefreshing = false;
+        
         if (iTabbedPaneIndex < jTabbedPane1.getTabCount())
         {
             if (jTabbedPane1.getTitleAt(iTabbedPaneIndex).equalsIgnoreCase("Scalar"))
             {
+                previousCompWasRefreshing = all_scalar_atts.isRefresherStarted();
                 all_scalar_atts.stopRefresher();
             } 
             else
             {
+                previousCompWasRefreshing = RefresherUtil.isRefreshing();
                 Component comp = jTabbedPane1.getComponent(iTabbedPaneIndex);
-                RefresherUtil.skippingRefresh(comp);
+                RefresherUtil.disableRefreshComponent(comp);
             }
         }
 
 
-	// disable skipping refreshing for the new focus component
+	// start refreshing for the new focus component
 	//System.out.println("Selected Index : " + tabIndex);
         if (jTabbedPane1.getTitleAt(jTabbedPane1.getSelectedIndex()).equalsIgnoreCase("Scalar"))
         {
-            all_scalar_atts.startRefresher();
+            if (previousCompWasRefreshing)
+               all_scalar_atts.startRefresher();
         }
         else
         {
             Component comp = jTabbedPane1.getSelectedComponent();
-            RefresherUtil.activateRefresh(comp);
-            RefresherUtil.refresh(comp);
+            RefresherUtil.refreshComponent(comp);
+            RefresherUtil.enableComponentRefresh(comp);
+            if (previousCompWasRefreshing)
+               RefresherUtil.startTabsRefresher();
         }
 	iTabbedPaneIndex = tabIndex;
     }
@@ -1407,10 +1404,7 @@ public class MainPanel extends javax.swing.JFrame {
     {//GEN-FIRST:event_refreshOnceActionPerformed
         // Add your handling code here:
 	all_scalar_atts.refresh();
-	all_spectrum_atts.refresh();
-	all_number_image_atts.refresh();
-	all_string_image_atts.refresh();
-        all_raw_image_atts.refresh();
+	RefresherUtil.refreshAllComponents(jTabbedPane1);
 	
 	if (devStateViewer.isVisible() || devStatusViewer.isVisible())
 	{
@@ -1454,11 +1448,9 @@ public class MainPanel extends javax.swing.JFrame {
      */
      private void stopAllRefresher()
      {
-	all_scalar_atts.stopRefresher();
-	all_spectrum_atts.stopRefresher();
-	all_number_image_atts.stopRefresher();
-	all_string_image_atts.stopRefresher();
-        all_raw_image_atts.stopRefresher();
+        all_scalar_atts.stopRefresher();
+        RefresherUtil.stopTabsRefresher();
+         
 	numberAndState_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
 	boolean_scalar_atts.stopRefresher(); /* AttributePolledList for booleanTrend */
         
@@ -1472,9 +1464,8 @@ public class MainPanel extends javax.swing.JFrame {
 	{
 	      state_status_atts.stopRefresher();
 	}
-	// activate all component to accept refresh
-	RefresherUtil.activateRefreshForAllComponent(jTabbedPane1);
-	// we call the refresh once method to refresh all attributes before stop all refresh
+
+        // we call the refresh once method to refresh all attributes before stop all refreshers
 	refreshOnceActionPerformed(null);
      } 
 
@@ -1484,42 +1475,26 @@ public class MainPanel extends javax.swing.JFrame {
       */
      private void startAllRefresher()
      {
-	   // all component to refuse refresh
-	   RefresherUtil.skippingRefreshForAllComponent(jTabbedPane1);
-	   // activate only the selected component of JTabbedPane to accept refresh
-           if (jTabbedPane1.getTitleAt(jTabbedPane1.getSelectedIndex()).equalsIgnoreCase("Scalar"))
-           {
-                all_scalar_atts.startRefresher();
-           }
-           else
-           {
-                Component comp = jTabbedPane1.getSelectedComponent();
-                RefresherUtil.activateRefresh(comp);
-                RefresherUtil.refresh(comp);
-           }
+        if (jTabbedPane1.getTitleAt(jTabbedPane1.getSelectedIndex()).equalsIgnoreCase("Scalar"))
+        {
+            all_scalar_atts.startRefresher();
+        }
+        RefresherUtil.startTabsRefresher();
 
-           //all_scalar_atts.startRefresher();
-	   all_spectrum_atts.startRefresher();
-	   all_number_image_atts.startRefresher();
-	   all_string_image_atts.startRefresher();
-           all_raw_image_atts.startRefresher();
-	   //number_scalar_atts.startRefresher(); /* AttributePolledList for trend is started by clicking the play button in the trend window */
-	   //boolean_scalar_atts.startRefresher(); /* AttributePolledList for booleanTrend is started by clicking the play button in the trend window */
-
-	   if (devStateViewer.isVisible() || devStatusViewer.isVisible())
-	   {
-	      DeviceFactory.getInstance().startRefresher();
-	   }
-	   else
-	   {
-	      if ((stateAtt != null) && (statusAtt != null))
-	      {
-		 if ( (stateAtt.hasEvents() == false) || (statusAtt.hasEvents() == false) )
-		 {
-		    state_status_atts.startRefresher();
-		 }
-	      }
-	   }
+        if (devStateViewer.isVisible() || devStatusViewer.isVisible())
+        {
+            DeviceFactory.getInstance().startRefresher();
+        }
+        else
+        {
+            if ((stateAtt != null) && (statusAtt != null))
+            {
+                if ( (stateAtt.hasEvents() == false) || (statusAtt.hasEvents() == false) )
+                {
+                    state_status_atts.startRefresher();
+                }
+            }
+        }
     }
 
     private void helpVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpVersionActionPerformed
@@ -1586,19 +1561,16 @@ public class MainPanel extends javax.swing.JFrame {
 
 		globalRefPeriod = it;
                 
-                all_scalar_atts.setRefreshInterval(it);
-		all_spectrum_atts.setRefreshInterval(it);
-		all_number_image_atts.setRefreshInterval(it);
-		all_string_image_atts.setRefreshInterval(it);
-                all_raw_image_atts.setRefreshInterval(it);
-	
-		if ((devStateViewer.isVisible()==false) && (devStatusViewer.isVisible()==false))
+                all_scalar_atts.setRefreshInterval(globalRefPeriod);
+                RefresherUtil.setTabsRefreshInterval(globalRefPeriod);
+
+                if ((devStateViewer.isVisible()==false) && (devStatusViewer.isVisible()==false))
 		{
 		   if ((stateAtt != null) && (statusAtt != null))
 		   {
 		      if ( (stateAtt.hasEvents() == false) || (statusAtt.hasEvents() == false) )
 		      {
-			 state_status_atts.setRefreshInterval(it);
+			 state_status_atts.setRefreshInterval(globalRefPeriod);
 		      }
 		   }
 		}
@@ -1702,7 +1674,6 @@ public class MainPanel extends javax.swing.JFrame {
 
         if (all_scalar_atts.getSize() > 0)
         {
-           RefresherUtil.activateRefreshForExpertAttributes(all_scalar_atts);
            show_all_scalars();
         }
 	   
@@ -1731,7 +1702,6 @@ public class MainPanel extends javax.swing.JFrame {
 
         if (all_scalar_atts.getSize() > 0)
         {
-	   RefresherUtil.skippingRefreshForExpertAttributes(all_scalar_atts);
            show_operator_scalars();
         }
 	   
@@ -1844,10 +1814,7 @@ public class MainPanel extends javax.swing.JFrame {
 	else
 	{
 	   all_scalar_atts.stopRefresher();
-	   all_spectrum_atts.stopRefresher();
-	   all_number_image_atts.stopRefresher();
-	   all_string_image_atts.stopRefresher();
-           all_raw_image_atts.stopRefresher();
+           RefresherUtil.stopTabsRefresher();
 	   numberAndState_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
 	   boolean_scalar_atts.stopRefresher(); /* AttributePolledList for booleanTrend */
 	   
@@ -1861,13 +1828,6 @@ public class MainPanel extends javax.swing.JFrame {
 	      attStateViewer.setModel(null);
 	      attStatusViewer.setModel(null);
 	   }
-
-           // We need to remove all skippingRefresh flags set to true by atkpanel
-           RefresherUtil.activateRefreshForAllAttributes(all_spectrum_atts);
-           RefresherUtil.activateRefreshForAllAttributes(all_number_image_atts);
-           RefresherUtil.activateRefreshForAllAttributes(all_string_image_atts);
-           RefresherUtil.activateRefreshForAllAttributes(all_raw_image_atts);
-           RefresherUtil.activateRefreshForAllAttributes(all_scalar_atts);
 
            /* We need to clear all models on all viewers to save memory usage */
            clearAllModels();
@@ -1894,11 +1854,8 @@ public class MainPanel extends javax.swing.JFrame {
 	else
 	{
 	   splash.setVisible(false);
-	   all_scalar_atts.stopRefresher();
-	   all_spectrum_atts.stopRefresher();
-	   all_number_image_atts.stopRefresher();
-	   all_string_image_atts.stopRefresher();
-           all_raw_image_atts.stopRefresher();
+           all_scalar_atts.stopRefresher();
+           RefresherUtil.stopTabsRefresher();
 	   numberAndState_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
 	   boolean_scalar_atts.stopRefresher(); /* AttributePolledList for booleanTrend */
 	
@@ -2129,7 +2086,6 @@ public class MainPanel extends javax.swing.JFrame {
         	  // Add the spectrum panel as a tab into the tabbed panel of the main frame
         	  jTabbedPane1.addTab(str_spectrum_att.getNameSansDevice(), str_sp_panel);
 		  all_spectrum_panels.add(idx, str_sp_panel);
-		  //str_spectrum_att.setSkippingRefresh(true);
 	       }
                else
                {
@@ -2370,7 +2326,6 @@ public class MainPanel extends javax.swing.JFrame {
             // Add the Image panel as a tab into the tabbed panel of the main frame
             jTabbedPane1.addTab(image_att.getNameSansDevice(), att_tab);
 	    all_image_panels.add(idx, att_tab);
-	    //image_att.setSkippingRefresh(true);
         }
     }
     
@@ -2443,7 +2398,6 @@ public class MainPanel extends javax.swing.JFrame {
         fr.esrf.tangoatk.core.AttributeList         all_sorted_image_atts;
 
 	
-        //all_string_image_panels = new Vector();
 	all_string_image_panels = new Vector<StringImagePanel>();
 	nb_atts = all_string_image_atts.getSize();
 	
@@ -2474,7 +2428,6 @@ public class MainPanel extends javax.swing.JFrame {
             // Add the Image panel as a tab into the tabbed panel of the main frame
             jTabbedPane1.addTab(image_att.getNameSansDevice(), att_tab);
 	    all_string_image_panels.add(idx, att_tab);
-	    //image_att.setSkippingRefresh(true);
         }
     }
     
@@ -2920,6 +2873,7 @@ public class MainPanel extends javax.swing.JFrame {
     * -refresh xxxx (refresh interval expressed in milli seconds
     * -expert (start atkpanel in expert mode)
     * deviceName (start atkpanel for the device)
+    * tabName (start atkpanel for the device above and show this tab)
     */
     public static void main(String args[])
     {
