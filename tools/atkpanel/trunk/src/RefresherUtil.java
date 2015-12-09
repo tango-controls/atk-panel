@@ -42,191 +42,193 @@ package atkpanel;
 import java.awt.Component;
 import fr.esrf.tangoatk.core.*;
 
-class RefresherUtil {
+class RefresherUtil
+{
     
-        static private AttributeList spectOrImageRefresherAttList = new AttributeList();
-        static private boolean       isRefreshing = false;
+        private AttributeList   spectOrImageRefresherAttList = new AttributeList();
+        private boolean         isRefreshing = false;
 
 
-        static void startTabsRefresher()
+        void startTabsRefresher()
         {
             isRefreshing = true;
             if (!spectOrImageRefresherAttList.isEmpty())
                 spectOrImageRefresherAttList.startRefresher();
         }
 
-        static void stopTabsRefresher()
+        void stopTabsRefresher()
         {
             isRefreshing = false;
             spectOrImageRefresherAttList.stopRefresher();
         }
 
-        static void setTabsRefreshInterval(int refIt)
+        void setTabsRefreshInterval(int refIt)
         {
             spectOrImageRefresherAttList.setRefreshInterval(refIt);
         }
         
-        static boolean isRefreshing()
+        boolean isRefreshing()
         {
             return isRefreshing;
         }
         
         
-	static void enableComponentRefresh(Component comp)
+	void enableComponentRefresh(Component comp)
 	{
 	    boolean  previousState = isRefreshing;
             stopTabsRefresher();
-                if(comp instanceof ImagePanel)
-		{
-			ImagePanel imgComp = (ImagePanel)comp;
-                        IAttribute  iatt = imgComp.getModel();
-                        spectOrImageRefresherAttList.add(iatt);
-		}
-		if(comp instanceof SpectrumPanel)
-		{
-			SpectrumPanel specComp = (SpectrumPanel)comp;
-                        IAttribute  iatt = specComp.getModel();
-                        spectOrImageRefresherAttList.add(iatt);
-		}
-		if(comp instanceof StringSpectrumPanel)
-		{
-			StringSpectrumPanel specComp = (StringSpectrumPanel)comp;
-                        IAttribute  iatt = specComp.getModel();
-                        spectOrImageRefresherAttList.add(iatt);
-		}		
-		if(comp instanceof StringImagePanel)
-		{
-			StringImagePanel imgComp = (StringImagePanel)comp;
-                        IAttribute  iatt = imgComp.getModel();
-                        spectOrImageRefresherAttList.add(iatt);
-		}		
-		if(comp instanceof DevStateSpectrumPanel)
-		{
-			DevStateSpectrumPanel dssComp = (DevStateSpectrumPanel)comp;
-                        IAttribute  iatt = dssComp.getModel();
-                        spectOrImageRefresherAttList.add(iatt);
-		}		
-		if(comp instanceof RawImagePanel)
-		{
-			RawImagePanel rawImgComp = (RawImagePanel)comp;
-                        IAttribute  iatt = rawImgComp.getModel();
-                        spectOrImageRefresherAttList.add(iatt);
-		}
-		if(comp instanceof BooleanSpectrumPanel)
-		{
-			BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel)comp;
-                        IAttribute  iatt = bssComp.getModel();
-                        spectOrImageRefresherAttList.add(iatt);
-		}
+            
+            if (comp instanceof ImagePanel)
+            {
+                ImagePanel imgComp = (ImagePanel) comp;
+                IAttribute iatt = imgComp.getModel();
+                spectOrImageRefresherAttList.add(iatt);
+            }
+            if (comp instanceof SpectrumPanel)
+            {
+                SpectrumPanel specComp = (SpectrumPanel) comp;
+                IAttribute iatt = specComp.getModel();
+                spectOrImageRefresherAttList.add(iatt);
+            }
+            if (comp instanceof StringSpectrumPanel)
+            {
+                StringSpectrumPanel specComp = (StringSpectrumPanel) comp;
+                IAttribute iatt = specComp.getModel();
+                spectOrImageRefresherAttList.add(iatt);
+            }
+            if (comp instanceof StringImagePanel)
+            {
+                StringImagePanel imgComp = (StringImagePanel) comp;
+                IAttribute iatt = imgComp.getModel();
+                spectOrImageRefresherAttList.add(iatt);
+            }
+            if (comp instanceof DevStateSpectrumPanel)
+            {
+                DevStateSpectrumPanel dssComp = (DevStateSpectrumPanel) comp;
+                IAttribute iatt = dssComp.getModel();
+                spectOrImageRefresherAttList.add(iatt);
+            }
+            if (comp instanceof RawImagePanel)
+            {
+                RawImagePanel rawImgComp = (RawImagePanel) comp;
+                IAttribute iatt = rawImgComp.getModel();
+                spectOrImageRefresherAttList.add(iatt);
+            }
+            if (comp instanceof BooleanSpectrumPanel)
+            {
+                BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel) comp;
+                IAttribute iatt = bssComp.getModel();
+                spectOrImageRefresherAttList.add(iatt);
+            }
             
             if (previousState)
                 startTabsRefresher();
 	}
 	
-	static void refreshComponent(Component comp)
+	void refreshComponent(Component comp)
 	{
-		if(comp instanceof ImagePanel)
-		{
-			ImagePanel    imgComp = (ImagePanel)comp;
-                        IAttribute    iatt = imgComp.getModel();
-                        iatt.refresh();
-		}
-		if(comp instanceof SpectrumPanel)
-		{
-			SpectrumPanel    spectComp = (SpectrumPanel)comp;
-                        IAttribute       iatt = spectComp.getModel();
-                        iatt.refresh();
-		}
-		if(comp instanceof StringSpectrumPanel)
-		{
-			StringSpectrumPanel strSpectComp = (StringSpectrumPanel)comp;
-                        IAttribute       iatt = strSpectComp.getModel();
-                        iatt.refresh();
-		}		
-		if(comp instanceof StringImagePanel)
-		{
-			StringImagePanel    strImageComp = (StringImagePanel)comp;
-                        IAttribute       iatt = strImageComp.getModel();
-                        iatt.refresh();
-		}		
-		if(comp instanceof DevStateSpectrumPanel)
-		{
-			DevStateSpectrumPanel dssComp = (DevStateSpectrumPanel)comp;
-                        IAttribute       iatt = dssComp.getModel();
-                        iatt.refresh();
-		}		
-		if(comp instanceof BooleanSpectrumPanel)
-		{
-			BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel)comp;
-                        IAttribute       iatt = bssComp.getModel();
-                        iatt.refresh();
-		}		
-		if(comp instanceof RawImagePanel)
-		{
-			RawImagePanel  rawImgComp = (RawImagePanel)comp;
-                        IAttribute       iatt = rawImgComp.getModel();
-                        iatt.refresh();
-		}
+            if (comp instanceof ImagePanel)
+            {
+                ImagePanel imgComp = (ImagePanel) comp;
+                IAttribute iatt = imgComp.getModel();
+                iatt.refresh();
+            }
+            if (comp instanceof SpectrumPanel)
+            {
+                SpectrumPanel spectComp = (SpectrumPanel) comp;
+                IAttribute iatt = spectComp.getModel();
+                iatt.refresh();
+            }
+            if (comp instanceof StringSpectrumPanel)
+            {
+                StringSpectrumPanel strSpectComp = (StringSpectrumPanel) comp;
+                IAttribute iatt = strSpectComp.getModel();
+                iatt.refresh();
+            }
+            if (comp instanceof StringImagePanel)
+            {
+                StringImagePanel strImageComp = (StringImagePanel) comp;
+                IAttribute iatt = strImageComp.getModel();
+                iatt.refresh();
+            }
+            if (comp instanceof DevStateSpectrumPanel)
+            {
+                DevStateSpectrumPanel dssComp = (DevStateSpectrumPanel) comp;
+                IAttribute iatt = dssComp.getModel();
+                iatt.refresh();
+            }
+            if (comp instanceof BooleanSpectrumPanel)
+            {
+                BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel) comp;
+                IAttribute iatt = bssComp.getModel();
+                iatt.refresh();
+            }
+            if (comp instanceof RawImagePanel)
+            {
+                RawImagePanel rawImgComp = (RawImagePanel) comp;
+                IAttribute iatt = rawImgComp.getModel();
+                iatt.refresh();
+            }
 	}	
 	
-	static void disableRefreshComponent(Component comp)
+	void disableRefreshComponent(Component comp)
 	{
 	    boolean  previousState = isRefreshing;
             stopTabsRefresher();
 
-                if(comp instanceof ImagePanel)
-		{
-			ImagePanel imgComp = (ImagePanel)comp;
-                        IAttribute  iatt = imgComp.getModel();
-                        spectOrImageRefresherAttList.remove(iatt.getName());
-		}
-		if(comp instanceof SpectrumPanel)
-		{
-			SpectrumPanel specComp = (SpectrumPanel)comp;
-                        IAttribute  iatt = specComp.getModel();
-                        spectOrImageRefresherAttList.remove(iatt.getName());
-		}
-		if(comp instanceof StringSpectrumPanel)
-		{
-			StringSpectrumPanel specComp = (StringSpectrumPanel)comp;
-                        IAttribute  iatt = specComp.getModel();
-                        spectOrImageRefresherAttList.remove(iatt.getName());
-		}		
-		if(comp instanceof StringImagePanel)
-		{
-			StringImagePanel imgComp = (StringImagePanel)comp;
-                        IAttribute  iatt = imgComp.getModel();
-                        spectOrImageRefresherAttList.remove(iatt.getName());
-		}		
-		if(comp instanceof DevStateSpectrumPanel)
-		{
-			DevStateSpectrumPanel dssComp = (DevStateSpectrumPanel)comp;
-                        IAttribute  iatt = dssComp.getModel();
-                        spectOrImageRefresherAttList.remove(iatt.getName());
-		}		
-		if(comp instanceof BooleanSpectrumPanel)
-		{
-			BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel)comp;
-                        IAttribute  iatt = bssComp.getModel();
-                        spectOrImageRefresherAttList.remove(iatt.getName());
-		}		
-		if(comp instanceof RawImagePanel)
-		{
-			RawImagePanel   rawImgComp = (RawImagePanel)comp;
-                        IAttribute  iatt = rawImgComp.getModel();
-                        spectOrImageRefresherAttList.remove(iatt.getName());
-		}
+            if (comp instanceof ImagePanel)
+            {
+                ImagePanel imgComp = (ImagePanel) comp;
+                IAttribute iatt = imgComp.getModel();
+                spectOrImageRefresherAttList.remove(iatt.getName());
+            }
+            if (comp instanceof SpectrumPanel)
+            {
+                SpectrumPanel specComp = (SpectrumPanel) comp;
+                IAttribute iatt = specComp.getModel();
+                spectOrImageRefresherAttList.remove(iatt.getName());
+            }
+            if (comp instanceof StringSpectrumPanel)
+            {
+                StringSpectrumPanel specComp = (StringSpectrumPanel) comp;
+                IAttribute iatt = specComp.getModel();
+                spectOrImageRefresherAttList.remove(iatt.getName());
+            }
+            if (comp instanceof StringImagePanel)
+            {
+                StringImagePanel imgComp = (StringImagePanel) comp;
+                IAttribute iatt = imgComp.getModel();
+                spectOrImageRefresherAttList.remove(iatt.getName());
+            }
+            if (comp instanceof DevStateSpectrumPanel)
+            {
+                DevStateSpectrumPanel dssComp = (DevStateSpectrumPanel) comp;
+                IAttribute iatt = dssComp.getModel();
+                spectOrImageRefresherAttList.remove(iatt.getName());
+            }
+            if (comp instanceof BooleanSpectrumPanel)
+            {
+                BooleanSpectrumPanel bssComp = (BooleanSpectrumPanel) comp;
+                IAttribute iatt = bssComp.getModel();
+                spectOrImageRefresherAttList.remove(iatt.getName());
+            }
+            if (comp instanceof RawImagePanel)
+            {
+                RawImagePanel rawImgComp = (RawImagePanel) comp;
+                IAttribute iatt = rawImgComp.getModel();
+                spectOrImageRefresherAttList.remove(iatt.getName());
+            }
             if (previousState)
                 startTabsRefresher();
 	}
 	
-	static void refreshAllComponents(javax.swing.JTabbedPane jtabbedPane)
+	void refreshAllComponents(javax.swing.JTabbedPane jtabbedPane)
 	{
-		Component[] components = jtabbedPane.getComponents();
-		for(int i=0;i < components.length;i++)
-		{
-			refreshComponent(components[i]);
-		}
+            Component[] components = jtabbedPane.getComponents();
+            for (int i = 0; i < components.length; i++)
+            {
+                refreshComponent(components[i]);
+            }
 	}
 	
 }
