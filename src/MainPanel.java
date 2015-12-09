@@ -117,11 +117,13 @@ public class MainPanel extends javax.swing.JFrame {
     private  Trend                                  globalTrend=null;
     private  BooleanTrend                           booleanTrend=null;
     
+    private RefresherUtil                           refUtil=null;
+    
     private int iTabbedPaneIndex = 0;
 
     private boolean refresherActivated = true;
 
-    private static final String                     REVISION="Revision: 5.3 ";
+    private static final String                     REVISION="Revision: 5.4 ";
     
     private JDialog                                 tgDevtestDlg = null;
     
@@ -133,6 +135,8 @@ public class MainPanel extends javax.swing.JFrame {
     
     private MainPanel()
     {
+        refUtil = new RefresherUtil();
+        
         java.awt.GridBagConstraints trendGbc;
         trendGbc = new java.awt.GridBagConstraints();
         trendGbc.gridx = 0;
@@ -478,7 +482,7 @@ public class MainPanel extends javax.swing.JFrame {
                             }
                          });
 
-        RefresherUtil.setTabsRefreshInterval(globalRefPeriod);
+        refUtil.setTabsRefreshInterval(globalRefPeriod);
 	
 	// Keep all number spectrum attributes operator or expert
         all_spectrum_atts = new fr.esrf.tangoatk.core.AttributeList();
@@ -1375,9 +1379,9 @@ public class MainPanel extends javax.swing.JFrame {
             } 
             else
             {
-                previousCompWasRefreshing = RefresherUtil.isRefreshing();
+                previousCompWasRefreshing = refUtil.isRefreshing();
                 Component comp = jTabbedPane1.getComponent(iTabbedPaneIndex);
-                RefresherUtil.disableRefreshComponent(comp);
+                refUtil.disableRefreshComponent(comp);
             }
         }
 
@@ -1392,10 +1396,10 @@ public class MainPanel extends javax.swing.JFrame {
         else
         {
             Component comp = jTabbedPane1.getSelectedComponent();
-            RefresherUtil.refreshComponent(comp);
-            RefresherUtil.enableComponentRefresh(comp);
+            refUtil.refreshComponent(comp);
+            refUtil.enableComponentRefresh(comp);
             if (previousCompWasRefreshing)
-               RefresherUtil.startTabsRefresher();
+               refUtil.startTabsRefresher();
         }
 	iTabbedPaneIndex = tabIndex;
     }
@@ -1404,7 +1408,7 @@ public class MainPanel extends javax.swing.JFrame {
     {//GEN-FIRST:event_refreshOnceActionPerformed
         // Add your handling code here:
 	all_scalar_atts.refresh();
-	RefresherUtil.refreshAllComponents(jTabbedPane1);
+	refUtil.refreshAllComponents(jTabbedPane1);
 	
 	if (devStateViewer.isVisible() || devStatusViewer.isVisible())
 	{
@@ -1449,7 +1453,7 @@ public class MainPanel extends javax.swing.JFrame {
      private void stopAllRefresher()
      {
         all_scalar_atts.stopRefresher();
-        RefresherUtil.stopTabsRefresher();
+        refUtil.stopTabsRefresher();
          
 	numberAndState_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
 	boolean_scalar_atts.stopRefresher(); /* AttributePolledList for booleanTrend */
@@ -1479,7 +1483,7 @@ public class MainPanel extends javax.swing.JFrame {
         {
             all_scalar_atts.startRefresher();
         }
-        RefresherUtil.startTabsRefresher();
+        refUtil.startTabsRefresher();
 
         if (devStateViewer.isVisible() || devStatusViewer.isVisible())
         {
@@ -1562,7 +1566,7 @@ public class MainPanel extends javax.swing.JFrame {
 		globalRefPeriod = it;
                 
                 all_scalar_atts.setRefreshInterval(globalRefPeriod);
-                RefresherUtil.setTabsRefreshInterval(globalRefPeriod);
+                refUtil.setTabsRefreshInterval(globalRefPeriod);
 
                 if ((devStateViewer.isVisible()==false) && (devStatusViewer.isVisible()==false))
 		{
@@ -1814,7 +1818,7 @@ public class MainPanel extends javax.swing.JFrame {
 	else
 	{
 	   all_scalar_atts.stopRefresher();
-           RefresherUtil.stopTabsRefresher();
+           refUtil.stopTabsRefresher();
 	   numberAndState_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
 	   boolean_scalar_atts.stopRefresher(); /* AttributePolledList for booleanTrend */
 	   
@@ -1855,7 +1859,7 @@ public class MainPanel extends javax.swing.JFrame {
 	{
 	   splash.setVisible(false);
            all_scalar_atts.stopRefresher();
-           RefresherUtil.stopTabsRefresher();
+           refUtil.stopTabsRefresher();
 	   numberAndState_scalar_atts.stopRefresher(); /* AttributePolledList for trend */
 	   boolean_scalar_atts.stopRefresher(); /* AttributePolledList for booleanTrend */
 	
