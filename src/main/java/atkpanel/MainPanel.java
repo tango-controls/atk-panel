@@ -1,7 +1,7 @@
 /*
  *
  *   Copyright (C) :	2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,
- *                      2013, 2014, 2015
+ *                      2013, 2014, 2015, 2016, 2017, 2018, 2019
  *			European Synchrotron Radiation Facility
  *			BP 220, Grenoble 38043
  *			FRANCE
@@ -61,6 +61,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public class MainPanel extends javax.swing.JFrame {
+    
+    
+    public static final String                      APPLI_VERSION_TAG;
 
     private  final Splash                           splash = new Splash();
     private  final int                              MIN_WIDTH = 220;
@@ -123,18 +126,44 @@ public class MainPanel extends javax.swing.JFrame {
 
     private boolean refresherActivated = true;
 
-    private static final String                     REVISION="Revision: 5.4 ";
     
     private JDialog                                 tgDevtestDlg = null;
     
     private static int[]                            wpos = null;
     
     private static int                              globalRefPeriod = 1000; // ms
+    
+    
+    static // find the version number in the property file
+    {
+        java.util.Properties props = new java.util.Properties();
+        java.io.InputStream stream = MainPanel.class.getClassLoader().getResourceAsStream("atkpanel.properties");
+        String propValue = null;
+        try
+        {
+            props.load(stream);
+            propValue = props.getProperty("atkpanel.version");
+            System.out.println(propValue);
+        }
+        catch (java.io.IOException ex) {}
+
+        if (propValue == null)
+            APPLI_VERSION_TAG = "xx";
+        else
+            APPLI_VERSION_TAG = propValue;
+    }
 
     /** Creates new form AtkPanel */
     
     private MainPanel()
     {
+        
+	splash.setTitle("AtkPanel  "+ APPLI_VERSION_TAG);
+	splash.setCopyright("(c) ESRF 2002-2019");
+	splash.setMessage("Waiting for device-name...");
+	splash.initProgress();
+        splash.setMaxProgress(12);
+	
         refUtil = new RefresherUtil();
         
         java.awt.GridBagConstraints trendGbc;
@@ -349,22 +378,7 @@ public class MainPanel extends javax.swing.JFrame {
     
    /** Creates new form AtkPanel */
     private boolean connectDevice(String  devName)
-    {
-        String        versionText, versNumber;
-        int           colon_idx, dollar_idx;
-        
-        versionText = new String(REVISION);
-        colon_idx = versionText.lastIndexOf(":");
-        dollar_idx = versionText.length();
-        versNumber = versionText.substring(colon_idx+1, dollar_idx);
-        
-        
-	splash.setTitle("AtkPanel  "+ versNumber);
-	splash.setCopyright("(c) ESRF 2002-2015");
-	splash.setMessage("Waiting for device-name...");
-	splash.initProgress();
-        splash.setMaxProgress(12);
-	
+    {        
 	if (devName == null)
 	{
 	    splash.toBack(); // To workaround the option pane going behind Splash (linux essentially)
@@ -815,7 +829,7 @@ public class MainPanel extends javax.swing.JFrame {
         if (roMode)
             return true;
 	
-	this.setTitle("AtkPanel "+versNumber+" : "+devName);
+	this.setTitle("AtkPanel "+APPLI_VERSION_TAG+" : "+devName);
         tgDevtestDlg = new JDialog(this, false);
         tgDevtestDlg.setTitle("Test Device : "+devName);
                 
@@ -1506,7 +1520,7 @@ public class MainPanel extends javax.swing.JFrame {
         String    versionText, versNumber;
         int       colon_idx, dollar_idx;
         
-        versionText = new String(REVISION);
+        versionText = new String(APPLI_VERSION_TAG);
         colon_idx = versionText.lastIndexOf(":");
         dollar_idx = versionText.length();
         versNumber = versionText.substring(colon_idx+1, dollar_idx);
