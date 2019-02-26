@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.tango.gui</groupId>
     <artifactId>ATKPanel</artifactId>
-    <version>5.7-SNAPSHOT</version>
+    <version>5.7</version>
     <name>AtkPanel</name>
     <description>AtkPanel</description>
 
@@ -91,7 +91,7 @@
         <connection>scm:git:git@github.com:tango-controls/atk-panel.git</connection>
         <developerConnection>scm:git:git@github.com:tango-controls/atk-panel.git</developerConnection>
         <url>https://github.com/tango-controls/atk-panel</url>
-        <tag>HEAD</tag>
+        <tag>ATKPanel-5.7</tag>
     </scm>
 
     <distributionManagement>
