@@ -162,7 +162,7 @@ public class MainPanel extends javax.swing.JFrame {
     {
         
 	splash.setTitle("AtkPanel  "+ APPLI_VERSION_TAG);
-	splash.setCopyright("(c) ESRF 2002-2019");
+	splash.setCopyright("(c) ESRF 2002-2020");
 	splash.setMessage("Waiting for device-name...");
 	splash.initProgress();
         splash.setMaxProgress(12);
