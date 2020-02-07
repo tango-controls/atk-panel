@@ -66,10 +66,13 @@ public class MainPanel extends javax.swing.JFrame {
     public static final String                      APPLI_VERSION_TAG;
 
     private  final Splash                           splash = new Splash();
-    private  final int                              MIN_WIDTH = 220;
-    private  final int                              MAX_WIDTH = 570;
-    private  final int                              MIN_HEIGHT = 220;
-    private  final int                              MAX_HEIGHT = 570;
+    private  final int                              SCALARS_MIN_WIDTH = 220;
+    private  final int                              SCALARS_MAX_WIDTH = 570;
+    private  final int                              SCALARS_MIN_HEIGHT = 220;
+    private  final int                              SCALARS_MAX_HEIGHT = 570;
+    
+    private  final int                              MAIN_PANEL_MAX_WIDTH = 600;
+    private  final int                              MAIN_PANEL_MAX_HEIGHT = 800;
     
     
     private  boolean                                standAlone = false;
@@ -1039,6 +1042,16 @@ public class MainPanel extends javax.swing.JFrame {
 	splash.setVisible(false);
 	
    	pack();
+        
+        java.awt.Dimension ps = this.getPreferredSize();
+        
+        if (ps.width > MAIN_PANEL_MAX_WIDTH)
+            ps.width = MAIN_PANEL_MAX_WIDTH;
+        if (ps.height > MAIN_PANEL_MAX_HEIGHT)
+            ps.height = MAIN_PANEL_MAX_HEIGHT;
+        
+        setPreferredSize(new java.awt.Dimension(ps));
+        
         if (wpos == null)
             ATKGraphicsUtils.centerFrameOnScreen(this);
         else
@@ -1973,15 +1986,15 @@ public class MainPanel extends javax.swing.JFrame {
 	neededWidth = allScalarListViewer.getPreferredSize().width;
 	neededHeight = allScalarListViewer.getPreferredSize().height;
 
-	if (neededWidth < MIN_WIDTH)
-	   neededWidth = MIN_WIDTH;
-	if (neededWidth > MAX_WIDTH)
-	   neededWidth = MAX_WIDTH;
+	if (neededWidth < SCALARS_MIN_WIDTH)
+	   neededWidth = SCALARS_MIN_WIDTH;
+	if (neededWidth > SCALARS_MAX_WIDTH)
+	   neededWidth = SCALARS_MAX_WIDTH;
 
-	if (neededHeight < MIN_HEIGHT)
-	   neededHeight = MIN_HEIGHT;
-	if (neededHeight > MAX_HEIGHT)
-	   neededHeight = MAX_HEIGHT;	      
+	if (neededHeight < SCALARS_MIN_HEIGHT)
+	   neededHeight = SCALARS_MIN_HEIGHT;
+	if (neededHeight > SCALARS_MAX_HEIGHT)
+	   neededHeight = SCALARS_MAX_HEIGHT;	      
 
 	jScrollPane1.setViewportView(allScalarListViewer);
 	jTabbedPane1.setPreferredSize(new java.awt.Dimension(neededWidth+30, neededHeight+30));
@@ -1999,15 +2012,15 @@ public class MainPanel extends javax.swing.JFrame {
 	neededWidth = operatorScalarListViewer.getPreferredSize().width;
 	neededHeight = operatorScalarListViewer.getPreferredSize().height;
 
-	if (neededWidth < MIN_WIDTH)
-	   neededWidth = MIN_WIDTH;
-	if (neededWidth > MAX_WIDTH)
-	   neededWidth = MAX_WIDTH;
+	if (neededWidth < SCALARS_MIN_WIDTH)
+	   neededWidth = SCALARS_MIN_WIDTH;
+	if (neededWidth > SCALARS_MAX_WIDTH)
+	   neededWidth = SCALARS_MAX_WIDTH;
 
-	if (neededHeight < MIN_HEIGHT)
-	   neededHeight = MIN_HEIGHT;
-	if (neededHeight > MAX_HEIGHT)
-	   neededHeight = MAX_HEIGHT;	      
+	if (neededHeight < SCALARS_MIN_HEIGHT)
+	   neededHeight = SCALARS_MIN_HEIGHT;
+	if (neededHeight > SCALARS_MAX_HEIGHT)
+	   neededHeight = SCALARS_MAX_HEIGHT;	      
 
 	jScrollPane1.setViewportView(operatorScalarListViewer);
 	jTabbedPane1.setPreferredSize(new java.awt.Dimension(neededWidth+30, neededHeight+30));
